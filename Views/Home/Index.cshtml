@@ -1,0 +1,197 @@
+﻿@using TeamBuilder.ViewModels
+@using  TeamBuilder.Models
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Главная";
+}
+<link href="~/css/home.css" rel="stylesheet" />
+<div id="app" v-cloak>
+    <div class="project_list">
+        <div class="section">
+            <h2 class="name">Доступные проектные деятельности</h2>
+        </div>
+        <div class="box">
+            @if (Model.AllProjects.Count() == 0)
+            {
+                <p class="no_projects">
+                    Ни одной проектной деятельности
+                    <br> на данный момент не созданно... Обратитесь к администратору
+                </p>
+            }
+            @foreach (Project p in Model.AllProjects)
+            {
+        <a href="/project/@p.ProjectId" class="project" style="margin-bottom: 20px;">
+            <span class="link">@p.Name</span>
+            &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(@Model.FullCountUsersInProject(p)/@Model.FullMaxCountInProject(p))</span>
+            &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Первокурсники (@Model.CountUsersInTeamsInProject(p).Item1 / @Model.Max12UsersInProject(p).Item1)
+            &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; Второкурсники (@Model.CountUsersInTeamsInProject(p).Item2 / @Model.Max12UsersInProject(p).Item2)
+            &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; @Model.CountTeamInProject(p) команд
+        </a>
+            }
+        </div>
+
+        @if (Model.User.Course != 3)
+        {
+            <div class="section">
+                <h2 class="name">Ваша команда</h2>
+            </div>
+            <div class="box">
+                @if (Model.UserTeam.Count() == 0)
+                {
+                    <p class="no_projects">
+                        Вы не состоите ни в одной команде.
+                        <br> Найдите нужную проектуную деятельность в списке выше <br>
+                        и вступите в понравившуюся Вам команду!
+                    </p>
+                }
+                @foreach (var t in Model.UserTeam)
+                {
+                    <a href="" class="project">
+                        <span class="link">@t.Project.Name</span>
+                        &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:red; font-weight: 600;">(/@(t.MaxCount1 + t.MaxCount2))</span>
+                        &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                        26 второкурсников
+                    </a>
+                    <div class="team_box">
+                        <span class="team_box_span">⤷</span>
+                        <a href="" class="team">
+                            <div class="img" style="background-image: url(https://i.gifer.com/fxVu.gif);"></div>
+                            <span class="link">@t.Title</span>
+                            &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(2/8)</span>
+                            &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                            26 второкурсников &nbsp; &nbsp; 15 команд
+                        </a>
+                    </div>
+                }
+
+                <!--<input autofocus class="search" type="search" name="" id="" placeholder="Номер проектной деятельности">
+            <div class="search_result">
+                <img src="pixel.png" alt="">
+                <p style="color: red;"></p>
+            </div>-->
+                <!--<a href="" class="project"><span class="link">Проектная деятельность </span>
+                &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:red; font-weight: 600;">(75/75)</span>
+                &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                26 второкурсников &nbsp; &nbsp; 15 команд
+                </a>
+            <div class="team_box">
+                <span class="team_box_span">⤷</span>
+                <a href="" class="team">
+                    <div class="img" style="background-image: url(https://i.gifer.com/2GU.gif);"></div>
+                    <span class="link">Название команды </span>
+                    &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(2/8)</span>
+                    &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                    26 второкурсников &nbsp; &nbsp; 15 команд
+                </a>
+            </div>
+
+            <a href="" class="project"><span class="link">Проектная деятельность </span>
+                &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:red; font-weight: 600;">(75/75)</span>
+                &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                26 второкурсников &nbsp; &nbsp; 15 команд
+                </a>
+            <div class="team_box">
+                <span class="team_box_span">⤷</span>
+                <a href="" class="team">
+                    <div class="img" style="background-image: url(https://i.gifer.com/fxVu.gif);"></div>
+                    <span class="link">Название команды </span>
+                    &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(2/8)</span>
+                    &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
+                    26 второкурсников &nbsp; &nbsp; 15 команд
+                </a>
+            </div>-->
+            </div>
+
+        }
+
+        @if (Model.User.Course == 3)
+        {
+
+
+
+            <div class="section">
+                <h2 class="name">Проекты, которые вы администрируете</h2>
+            </div>
+
+            <div class="box">
+
+                @foreach (Project p in Model.ProjectsForAdmin)
+                {
+                    <a href="/project/@p.ProjectId" class="project" style="margin-bottom: 20px;">
+                        <span class="link">@p.Name</span>
+                        &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(56/75)</span>
+                        &nbsp; &nbsp;  &nbsp; &nbsp; Первокурсники (@Model.CountUsersInTeamsInProject(p).Item1 / @Model.Max12UsersInProject(p).Item1) &nbsp; &nbsp;
+                        второкурсники (@Model.CountUsersInTeamsInProject(p).Item2 / @Model.Max12UsersInProject(p).Item2) &nbsp; &nbsp; @Model.CountTeamInProject(p) команд
+                    </a>
+                    
+                }
+
+                @if (Model.ProjectsForAdmin.Count() == 0)
+                {
+                    <p class="no_projects">Вы пока не администрируете ни один проект. <br> (Доступно только для руководителей и администрации)</p>
+                }
+                <div class="button button_blue new_project" v-on:click="show=!show">Создать новый проект &nbsp; 📄</div>
+            </div>
+        }
+    </div>
+
+
+
+            <div class="create_project_box" v-if="show">
+                <div class="dark"></div>
+
+                <div class="create_project">
+                    <form action="" method="post" class="new_project_form" v-on:submit.prevent="formSubmit">
+                        <p style="margin:20px 0 0px 0; font-size: 30px; cursor:pointer; position: relative; right: 48%;" v-on:click="show=!show">🞪</p>
+                        <h4 style="margin-top: 0;">Размер команд</h4>
+                        <team v-for="(team, i) in team_inputs" :key="team.id" v-on:changedata="change" v-on:deletedata="deleteteam"
+                              :id="team.id"></team>
+
+                        <p class="button button_green" v-on:click="addTeam()">+ Добавить команды</p>
+                        <h5 class="sum_students" style="padding: 10px 50px;
+                                             border-top: 2px solid lightgrey;
+                                             border-bottom: 2px solid lightgrey;">
+                            Всего студентов: {{students}}
+                        </h5>
+
+                        <h4 style="margin-top: 50px; margin-bottom: 10px;
+                               padding: 30px 26% 0; border-top: 2px solid lightgrey;">
+                            Критерии оценивания
+                        </h4>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th width="20">#</th>
+                                    <th width="400">Критерий оценивания</th>
+                                    <th width="100">Макс. количество баллов (по 100 шкале)</th>
+                                    <th width="25"></th>
+                                </tr>
+
+                                <tr is="kriterii" v-for="(k, i) in krits"
+                                    v-on:deletekritfromcomponent="deletekrit"
+                                    v-on:changeinkritsevent="changekrit"
+                                    :key="k.id" :id="k.id" :number="i"></tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align:center; font-size: 20px; font-weight: 500;"></td>
+                                    <!--<td><input style="width:100px;" type="number" max="100" min="100" disabled :value="" required /></td>-->
+                                    <td style="text-align:center; font-size: 20px; font-weight: 500;">{{pointsSum}}</td>
+                                    <td></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="button button_green" v-on:click="addKrit()" style="margin-top: 30px;">+ Добавить критерий</p>
+                        <button class="button button_blue" type="submit" v-if="submitButton">Создать</button>
+                        <button class="button button_blue" type="submit" v-else disabled>Идет создание команды...</button>
+                    </form>
+
+                    <!--<div class="auto_create_project">
+                    <p>Автоматическое создание</p>
+                </div>-->
+                </div>
+            </div>
+    </div>
+
+<script src="~/js/home.js"></script>

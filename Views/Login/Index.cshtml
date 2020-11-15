@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+}
+
+<link rel="stylesheet" href="~/css/login.css">
+
+<div class="login">
+    <h5>
+        Добро пожаловать в интерактивное приложение для удобного <br>
+        ведения проектной деятельности, разработанное <br>
+        <a asp-route="developers" class="link">командой студентов Мехмата ЮФУ. <span style="font-style: normal;">👋</span></a>
+        <br> <br>
+
+        Для дальнейшей работы в системе <br>
+        выполните вход через ВКонтакте
+    </h5>
+        <br> <br> <br> <br>
+        <button class="button button_blue" style="font-weight:500; font-size: 19px;" v-if="!login" v-on:click="Redir">Войти через ВК</button>
+        <button class="button" disabled style="font-weight: 500; font-size: 19px;" v-else>Перенаправление...</button>
+</div>
+
+<script src="~/js/login.js"></script>

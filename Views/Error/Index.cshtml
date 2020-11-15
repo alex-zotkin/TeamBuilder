@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["StatusCode"]</title>
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/error.css">
+</head>
+<body>
+    <div class="bg"></div>
+
+
+    <div class="dark">
+        <div class="message">
+            <h1>@ViewData["StatusCode"]</h1>
+            <p>Похоже вы все сломали...<br> Мы ничего не видели! Перейдите отсюда на <a asp-controller="Home" asp-action="Index" class="link">главную</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+﻿<link href="~/css/project.css" rel="stylesheet" />
+
+<br /><br /><br />
+            <h2></h2>
+
+<div id="app" v-cloak>
+    <delete_alert v-if="deleteAlert" v-on:deletealert="deletealert"></delete_alert>
+
+    <add_admin v-if="addAdminBox"
+               :notadminsproject="notadminsproject"
+               :adminsproject="adminsproject"
+               v-on:addadmin="addadmin"
+               v-on:deleteadmin="deleteadmin"></add_admin>
+
+    <info v-if="infoBool" v-bind:infoposition="infoposition" v-bind:infodata="infoData"></info>
+
+    <div class="project_actions_box">
+        <h3 v-if="!editMode">{{data.Project.Name}}</h3>
+        <input id="projectName" v-else type="text" placeholder="Название проектной деятельности" :value="data.Project.Name">
+
+        <div class="admin_actions" v-if="data.IsUserAdmin">
+            <div class="button button_red" v-if="!editMode" v-on:click="deleteAlert=true">Удалить ПД</div>
+            <div class="button button_green" v-if="!editMode" v-on:click="StartEdit">Редактировать</div>
+            <div class="button button_grey" v-else v-on:click="EndEdit">Сохранить</div>
+        </div>
+    </div>
+
+    <div class="user_list_box">
+        <h5>Администраторы</h5>
+        <ul>
+            <li v-on:mousemove="ShowInfo($event, admin)" v-for="admin in data.ProjectAdmins"
+                v-on:mouseleave="infoBool = false">
+                <a :href="admin.VkId">
+                    <img :src="admin.Photo50">
+                    <p>{{admin.FirstName}} {{admin.LastName}}</p>
+                </a>
+            </li>
+            <li class="button button_green add_admin_button" v-on:click="addAdminBox = true">
+                Редактировать </br> администраторов
+            </li>
+        </ul>
+        <h5>Пользователи, <br> вступившие в команды</h5>
+        <ul>
+
+            <li v-on:mousemove="ShowInfo" v-for="user in data.UsersInTeams"
+                v-on:mouseleave="infoBool = false">
+                <a href="">
+                    <img src="https://sun1-47.userapi.com/impf/c854024/v854024599/8f279/w7IVcGx88UE.jpg?size=200x0&quality=90&crop=283,16,547,547&sign=0d5373c07f96976b45dc87a36d7eb61c&ava=1">
+                    <p>Александр Зоткин</p>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+    <div class="project_list" v-if="data.IsUserAdmin">
+        <div class="team team_disabled" v-if="!editMode" v-for="n in 5">
+            <h3 style="cursor:default;">Команда {{n}}</h3>
+            <p v-if="!editMode">Пока ни один студент <br> не вступил в данную команду</p>
+            <h2 v-if="!editMode">3 Х 2</h2>
+        </div>
+
+        <div class="team team_disabled" v-else>
+            <input type="text" placeholder="Название команды" value="Команда #n" style="text-align: center;">
+
+            <div class="editSizeInput">
+                <div class="label">
+                    <label>1 курс</label>
+                    <input type="number" value="3">
+                </div>
+                <h2>Х</h2>
+                <div class="label">
+                    <label>2 курс</label>
+                    <input type="number" value="2">
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="team add_team" v-if="editMode">
+            <h1>+</h1>
+            <p>Добавить команды</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/js/project.js"></script>

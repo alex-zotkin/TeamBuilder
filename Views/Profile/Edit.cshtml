@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Профиль";
+}
+<link rel="stylesheet" href="~/css/profileEdit.css">
+
+
+<div class="box">
+        @if ((string)ViewData["PhotoMax"] != "")
+        {
+        <div class="profile_img_and_name" style='background-image:  url(@("https://" + ViewData["PhotoMax"]));'>
+            <div class="name">
+                <h1>@ViewData["FirstName"]</h1>
+                <br> <h1>@ViewData["LastName"]</h1>
+            </div>
+        </div>
+        }
+        else {
+        <div class="profile_img_and_name" style='background-image:  url(@Url.Content("imgs/noImg.jpg"))'>
+            <div class="name">
+                <h1>@ViewData["FirstName"]</h1>
+                <br> <h1>@ViewData["LastName"]</h1>
+                <!--<br> <h1><a href="" class = "link">https://vk.com/im</a></h1> -->
+            </div>
+        </div>
+        }
+
+
+        @if ((bool)ViewData["IsProfileNotFull"])
+        {
+            <div class="alert">Заполните профиль! &nbsp; 😡</div>
+        }
+        <div class="profile">
+            <h2>Профиль</h2>
+            <form asp-controller="Profile" asp-action="AddData" method="post">
+
+                <select required name="course" id="">
+                    <option disabled value="" selected>Выберите ваш курс &nbsp; 👇</option>
+                    @if ((int)ViewData["Course"] == 1)
+                    {
+                        <option value="1" selected>1 курс</option>
+                    }
+                    else
+                    {
+                        <option value="1">1 курс</option>
+                    }
+
+                    @if ((int)ViewData["Course"] == 2)
+                    {
+                        <option value="2" selected>2 курс</option>
+                    }
+                    else
+                    {
+                        <option value="2">2 курс</option>
+                    }
+
+                    @if ((int)ViewData["Course"] == 3)
+                    {
+                        <option value="3" selected>Администратор</option>
+                    }
+                    else
+                    {
+                        <option value="3">Администратор</option>
+                    }
+
+                </select>
+                @if ((int)ViewData["Group"] != 0)
+                {
+                    <input type="number" min="1" step="1" name="group" id="" placeholder="Введите номер группы" required
+                           value="@ViewData["Group"]">
+                }
+                else
+                {
+                    <input type="number" min="1" step="1" name="group" id="" placeholder="Введите номер группы" required>
+                }
+
+
+
+                <div style="width:450px; height:220px; overflow:auto;" class="checkselect">
+                    <legend>Технологии, с которыми вы знакомы &nbsp; 👇 </legend>
+                    <input type="checkbox" value="">Ничего не знаю, научите!
+                    <fieldset>
+                        <legend>Дизайн, творчество</legend>
+                        <input type="checkbox" value="">Corel Draw<Br>
+                        <input type="checkbox" value="">Illustrator<Br>
+                        <input type="checkbox" value="">Другой вид творчества<Br>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Верстка</legend>
+                        <input type="checkbox" value="">Html<Br>
+                        <input type="checkbox" value="">Css<Br>
+                        <input type="checkbox" value="">JavaScript<Br>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Языки программирования</legend>
+                        <input type="checkbox" />Pascal<Br>
+                        <input type="checkbox" />Python<Br>
+                        <input type="checkbox" />Java<Br>
+                        <input type="checkbox" />Kotlin<Br>
+                        <input type="checkbox" />C#<Br>
+                        <input type="checkbox" />C++<Br>
+                        <input type="checkbox" />PHP<Br>
+                        <input type="checkbox" />Ruby<Br>
+                        <input type="checkbox" />Swift<Br>
+                        <input type="checkbox" />Go<Br>
+                        <input type="checkbox" />Другой язык<Br>
+                    </fieldset>
+                </div>
+
+                <textarea required name="description" id="" cols="23" rows="4"
+                          placeholder="Ваши сильные стороны при командной работе (50 символов)">@ViewData["Description"]</textarea>
+                <p id="symbols_in_area" style="margin-top:-50px; margin-bottom: 40px; width: 440px; text-align:end;">0/50</p>
+                <button type="submit" class="button button_blue"><h5>Сохранить</h5></button>
+            </form>
+        </div>
+    </div>
+
+<script src="~/js/profile.js"></script>
+

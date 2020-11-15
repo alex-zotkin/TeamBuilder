@@ -1,0 +1,98 @@
+.box{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: calc(100% - 73px);
+    top: 73px;
+}
+
+.profile_img_and_name{
+    position: absolute;
+    width: 40%;
+    height: 100%;
+    left: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+.alert{
+    position: absolute;
+    width: 60%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    font-size: 18px;
+    right: 0;
+    top: 0;
+    text-align: center;
+    background-color:#f8d7da;
+    border-bottom: 2px solid #f5c6cb;
+    color: #721c24;
+    z-index: 10;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.profile{
+    position: absolute;
+    width: 60%;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-direction: column;
+}
+
+.profile h2{
+    padding-bottom: 55px;
+}
+
+
+form{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    margin-bottom: -40px;
+}
+
+.name{
+    position: absolute;
+    bottom: 7%;
+}
+
+.name h1{
+    line-height: 115px;
+    display: inline;
+    background-color: white;
+    padding: 10px;
+}
+
+.checkselect{
+    margin-bottom: 25px;
+}
+
+.checkselect fieldset {
+	display: block;
+	margin:  0;
+	padding: 0;
+	border: none;
+}
+
+
+.checkselect legend {
+	display: block;
+	margin: 0;
+	padding: 10px 0;
+	font-weight: 700;
+	font-size: 1.1em;
+	line-height: 1.4;
+}
+
+input, select{
+    margin-bottom: 30px;
+}
+

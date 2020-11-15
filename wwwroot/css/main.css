@@ -1,0 +1,242 @@
+﻿@charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500&display=swap');
+
+body{
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+
+[v-cloak]{
+    display: none;
+}
+
+hr {
+    width: 100%;
+    border: 0;
+    height: 1px;
+    background: #000;
+    background-image: -webkit-linear-gradient(left, #fff, #000, #fff);
+    background-image: -moz-linear-gradient(left, #fff, #000, #fff);
+    background-image: -ms-linear-gradient(left, #fff, #000, #fff);
+    background-image: -o-linear-gradient(left, #fff, #000, #fff);
+}
+
+button{
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+h1{
+    font-weight: 900;
+    font-size: 80px;
+    padding: 0;
+    margin: 0;
+}
+
+h2{
+    font-weight: 800;
+    font-size: 35px;
+    padding: 0;
+    margin: 0;
+}
+
+h3{
+    font-weight: 800;
+    font-size: 25px;
+    padding: 0;
+    margin: 0;
+}
+
+h5{
+    font-weight: 500;
+    font-size: 20px;
+    margin: 0;
+}
+
+p{
+    font-weight: 500;
+    font-size: 16px;
+}
+.button{
+    color: white;
+    text-decoration: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-style: normal;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+
+
+.button:hover{
+    /*box-shadow:
+    1px 1px #000201,
+    2px 2px #000201,
+    3px 3px #000201,
+    4px 4px #000201,
+    5px 5px #000201,
+    6px 6px #000201;*/
+    transform: scale(1.03);
+}
+
+
+.button_blue{
+    background-color:  rgba(5, 30, 255, 0.911);
+    border: 2px solid rgba(4, 23, 187, 0.911);
+}
+
+
+.button_red{
+    background-color:  rgba(236, 36, 1, 0.918);
+    border: 2px solid rgba(144, 22, 0, 0.883);
+    color: white;
+}
+
+.button_green{
+    background-color:  rgba(20, 146, 8, 0.952);
+    border: 2px solid rgb(10, 100, 2);
+    color: white;
+}
+
+.button_grey, button:disabled{
+    background-color: whitesmoke;
+    border: 2px solid rgb(214, 214, 214);
+    color: black;
+}
+
+button:disabled{
+    cursor: not-allowed;
+}
+
+
+.button_blue:hover {
+    box-shadow: 5px 10px 30px rgba(5, 30, 255, 0.5);
+}
+
+.button_red:hover{
+    box-shadow: 5px 10px 30px rgba(255, 38, 0, 0.733);
+}
+
+.button_green:hover{
+    box-shadow: 5px 10px 30px  rgba(23, 194, 7, 0.575);
+}
+
+.button_grey:hover, button:disabled:hover{
+    box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.335);
+}
+
+.link{
+    text-decoration: none;
+    padding-bottom: 3px;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size .3s;
+    color: rgba(5, 30, 255, 0.911);
+}
+
+.link:hover {
+    background-size: 100% 2px;
+}
+
+input{
+    border: 2px solid transparent;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+    text-decoration: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-style: normal;
+    background-color:rgba(78, 78, 78, 0.15);
+    margin-bottom: 3px;
+    outline: none;
+}
+
+input:hover{
+    border: 2px solid gainsboro;
+}
+
+input:focus{
+    border: 2px solid rgba(0, 0, 0, 0.39);
+}
+
+input:disabled{
+    font-size: 18px;
+    color:rgb(82, 82, 82);
+    cursor: not-allowed;
+}
+
+select{
+    outline: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+    background-color: rgba(230, 230, 230, 0.335);
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+    text-decoration: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+    -webkit-appearance: none;
+   -moz-appearance: none;
+   /*appearance: none;*/
+}
+
+select:hover{
+    border: 2px solid gainsboro;
+}
+
+select:focus{
+    border: 2px solid rgba(0, 0, 0, 0.39);
+}
+
+option{
+    white-space: pre-wrap;
+}
+
+textarea{
+    outline: none;
+    border: 2px solid transparent;
+    background-color: rgba(230, 230, 230, 0.335);
+    resize: none;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+textarea:hover{
+    border: 2px solid rgb(184, 31, 31);
+}
+
+textarea:focus{
+    border: 2px solid rgba(0, 0, 0, 0.39);
+}
+
+form{
+    font-family: 'Montserrat', sans-serif;
+}
+
