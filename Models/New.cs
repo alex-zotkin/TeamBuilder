@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 
 namespace TeamBuilder.Models
 {
-    public class Project
+    public class New
     {
+        public int NewId { get; set; }
         public int ProjectId { get; set; }
-        public string Name { get; set; }
-        public List<Team> Teams { get; set; }
-        public List<ProjectUser> Admins { get; set; }
+        //public Project Project { get; set; }
+        public string Text { get; set; }
+        public User Author { get; set; }
         public DateTime Date { get; set; }
-        public List<New> News { get; set; }
-
     }
 }

@@ -8,9 +8,11 @@ body{
     
 }
 
-[v-cloak]{
-    display: none;
+[v-cloak] {
+    display: none !important;
 }
+
+
 
 hr {
     width: 100%;
@@ -72,6 +74,7 @@ p{
     -o-transition: all 0.2s ease;
     transition: all 0.2s ease;
     cursor: pointer;
+    font-size: 15px;
 }
 
 
@@ -229,14 +232,19 @@ textarea{
 }
 
 textarea:hover{
-    border: 2px solid rgb(184, 31, 31);
+    border: 2px solid gainsboro;
 }
 
 textarea:focus{
     border: 2px solid rgba(0, 0, 0, 0.39);
 }
 
+textarea:disabled{
+    opacity: 0.4;
+}
+
+
+
 form{
     font-family: 'Montserrat', sans-serif;
 }
-

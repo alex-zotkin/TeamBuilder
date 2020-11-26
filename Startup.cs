@@ -113,6 +113,26 @@ namespace TeamBuilder
                  name: "changeProjectName",
                  pattern: "/changeProjectName/{id}/{newName}",
                  defaults: new { controller = "Project", action = "ChangeProjectName" });
+
+                endpoints.MapControllerRoute(
+                 name: "addInProjectAdmin",
+                 pattern: "/addInProjectAdmin/{id}/{VkId}",
+                 defaults: new { controller = "Project", action = "AddInProjectAdmin" });
+
+                endpoints.MapControllerRoute(
+                 name: "deleteFromProjectAdmin",
+                 pattern: "/deleteFromProjectAdmin/{id}/{VkId}",
+                 defaults: new { controller = "Project", action = "DeleteFromProjectAdmin" });
+
+                endpoints.MapControllerRoute(
+                 name: "addInProjectNews",
+                 pattern: "/addInProjectNews/{id}/{VkId}/{text}",
+                 defaults: new { controller = "Project", action = "AddInProjectNews" });
+
+                endpoints.MapControllerRoute(
+                 name: "deleteInProjectNews",
+                 pattern: "/deleteInProjectNews/{newId}",
+                 defaults: new { controller = "Project", action = "DeleteInProjectNews" });
             });
         }
     }

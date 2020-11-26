@@ -1,6 +1,5 @@
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\appsettings.json
-C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\TeamBuilder.exe
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\TeamBuilder.deps.json
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\bin\Debug\netcoreapp3.1\TeamBuilder.runtimeconfig.json
@@ -79,3 +78,4 @@ C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\Team
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\Razor\Views\Profile\Edit.cshtml.g.cs
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\Razor\Views\Project\Index.cshtml.g.cs
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\TeamBuilder.csprojAssemblyReference.cache
+C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\scopedcss\bundle\TeamBuilder.styles.css

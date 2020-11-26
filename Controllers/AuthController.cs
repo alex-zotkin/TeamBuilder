@@ -24,13 +24,14 @@ namespace TeamBuilder.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            string redirect_path = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
             if (!HttpContext.Request.Cookies.ContainsKey("UserData"))
             {
                 if (!Request.Query.ContainsKey("code"))
                     return Redirect($"https://oauth.vk.com/" +
                                 $"authorize?client_id={client_id}" +
                                 $"&display=page" +
-                                $"&redirect_uri=https://localhost:44342/auth" +
+                                $"&redirect_uri={redirect_path}/auth" +
                                 $"&scope=photos" +
                                 $"&response_type=code" +
                                 $"&v=5.124");
@@ -40,7 +41,7 @@ namespace TeamBuilder.Controllers
                     string path = $"https://oauth.vk.com/" +
                     $"access_token?client_id={client_id}" +
                     $"&client_secret={client_secret}" +
-                    $"&redirect_uri=https://localhost:44342/auth" +
+                    $"&redirect_uri={redirect_path}/auth" +
                     $"&code={Request.Query["code"]}";
 
                     using (var webClient = new System.Net.WebClient())

@@ -13,6 +13,7 @@ namespace TeamBuilder.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Mark> Marks { get; set; }
+        public DbSet<New> News { get; set; }
         public DbSet<TeamUser> TeamUsers { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }    
         public DbSet<UserMark> UserMarks { get; set; }
@@ -23,15 +24,19 @@ namespace TeamBuilder.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Project>()
+            /*modelBuilder.Entity<Project>()
                 .HasMany(t => t.Teams)
-                .WithOne(p => p.Project);
+                .WithOne(p => p.Project);*/
+
 
             modelBuilder.Entity<Team>()
                 .HasKey(x => x.TeamId);
 
             modelBuilder.Entity<User>()
                 .HasKey(x => x.UserId);
+
+            modelBuilder.Entity<New>()
+                .HasKey(x => x.NewId);
 
             modelBuilder.Entity<ProjectUser>()
                 .HasKey(x => new { x.ProjectId, x.UserId});
@@ -43,6 +48,7 @@ namespace TeamBuilder.Models
                 .HasOne(x => x.User)
                 .WithMany(e => e.AdminProjects)
                 .HasForeignKey(x => x.UserId);
+
 
 
             modelBuilder.Entity<TeamUser>()

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamBuilder.Models;
 
 namespace TeamBuilder.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20201119095809_News2")]
+    partial class News2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,8 +97,6 @@ namespace TeamBuilder.Migrations
 
                     b.HasIndex("AuthorUserId");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("News");
                 });
 
@@ -116,6 +116,21 @@ namespace TeamBuilder.Migrations
                     b.HasKey("ProjectId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.ProjectNew", b =>
+                {
+                    b.Property<int>("NewId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("NewId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectNews");
                 });
 
             modelBuilder.Entity("TeamBuilder.Models.ProjectUser", b =>
@@ -155,7 +170,7 @@ namespace TeamBuilder.Migrations
                     b.Property<int>("MaxCount2")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -277,9 +292,18 @@ namespace TeamBuilder.Migrations
                     b.HasOne("TeamBuilder.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorUserId");
+                });
 
-                    b.HasOne("TeamBuilder.Models.Project", null)
-                        .WithMany("News")
+            modelBuilder.Entity("TeamBuilder.Models.ProjectNew", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.New", "New")
+                        .WithMany()
+                        .HasForeignKey("NewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TeamBuilder.Models.Project", "Project")
+                        .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -302,11 +326,9 @@ namespace TeamBuilder.Migrations
 
             modelBuilder.Entity("TeamBuilder.Models.Team", b =>
                 {
-                    b.HasOne("TeamBuilder.Models.Project", null)
+                    b.HasOne("TeamBuilder.Models.Project", "Project")
                         .WithMany("Teams")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("TeamBuilder.Models.TeamUser", b =>

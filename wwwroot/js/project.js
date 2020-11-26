@@ -88,7 +88,7 @@ Vue.component("add_admin", {
             </div>
         </div>
         <div class="add_admin_buttons">
-            <button class="button button_green">Сохранить</button>
+            <button class="button button_green" v-on:click="$emit('close')">Сохранить</button>
         </div>
     </div>
     </div>
@@ -123,10 +123,6 @@ Vue.component("add_admin", {
 
 
 
-
-
-
-
 new Vue({
     el: "#app",
     data: {
@@ -142,6 +138,9 @@ new Vue({
 
         addAdminBox: false,
         alladmins: [],
+
+        news_text: "",
+        news_textarea_desabled: false,
         /*alladmins: [
             { name: "Александр", lastName: "Зоткин", VkId: 123456, isAdmin: true },
             { name: "Яна", lastName: "Михална", VkId: 564987, isAdmin: false },
@@ -235,6 +234,17 @@ new Vue({
             }
             this.adminsproject.push(this.notadminsproject[index]);
             this.notadminsproject.splice(index, 1);
+
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/addInProjectAdmin/" + ProjectId + "/" + VkId,
+                success: (data) => {
+                    //this.loadData();
+                }
+            });
+
         },
 
         deleteadmin(VkId) {
@@ -248,7 +258,44 @@ new Vue({
                 }
                 this.notadminsproject.push(this.adminsproject[index]);
                 this.adminsproject.splice(index, 1);
+
+                let Path = location.pathname.split("/");
+                let ProjectId = Path[Path.length - 1];
+                $.ajax({
+                    type: "POST",
+                    url: "/deleteFromProjectAdmin/" + ProjectId + "/" + VkId,
+                    success: (data) => {
+                        //this.loadData();
+                    }
+                });
             }
+        },
+
+        addNew() {
+            let text = this.news_text;
+            this.news_textarea_desabled = true; 
+            this.news_text = "Загрузка...";
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/addInProjectNews/" + ProjectId + "/" + this.data.CurrentUser.VkId + "/" + text,
+                success: (data) => {
+                    this.news_text = "";
+                    this.loadData();
+                    this.news_textarea_desabled = false;
+                }
+            });
+        },
+
+        deleteNew(NewId) {
+            $.ajax({
+                type: "POST",
+                url: "/deleteInProjectNews/"  + NewId,
+                success: (data) => {
+                    this.loadData();
+                }
+            });
         }
     },
         

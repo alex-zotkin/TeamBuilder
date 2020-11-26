@@ -19,14 +19,14 @@ namespace TeamBuilder.ViewModels
 
         public int CountTeamInProject(Project p)
         {
-            return AllTeams.Where(t => t.Project.ProjectId == p.ProjectId).Count();
+            return AllTeams.Where(t => t.ProjectId == p.ProjectId).Count();
         }
 
         public (int, int) Max12UsersInProject(Project p)
         {
             int max1 = 0;
             int max2 = 0;
-            foreach(Team t in AllTeams.Where(t => t.Project.ProjectId == p.ProjectId))
+            foreach(Team t in AllTeams.Where(t => t.ProjectId == p.ProjectId))
             {
                 max1 += t.MaxCount1;
                 max2 += t.MaxCount2;
@@ -39,7 +39,7 @@ namespace TeamBuilder.ViewModels
         {
             int c1 = 0;
             int c2 = 0;
-            foreach (Team t in AllTeams.Where(t => t.Project.ProjectId == p.ProjectId))
+            foreach (Team t in AllTeams.Where(t => t.ProjectId == p.ProjectId))
             {
                 c1 += AllUsers.Where(team => team.TeamId == t.TeamId).Where(u => u.User.Course == 1).Count();
                 c2 += AllUsers.Where(team => team.TeamId == t.TeamId).Where(u => u.User.Course == 2).Count();
