@@ -59,7 +59,7 @@ namespace TeamBuilder.Controllers
             Project Project = new Project();
             Project.Name = $"Проектная деятельность {DateTime.Now.Year}";
             Project.Date = DateTime.Today;
-            /* Project.Teams = new List<Team>();*/
+            Project.Teams = new List<Team>();
 
             Project.Admins = new List<ProjectUser>();
             ProjectUser PU = new ProjectUser();

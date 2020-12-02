@@ -84,7 +84,7 @@ namespace TeamBuilder.Controllers
                                                                         $"&access_token={data.access_token}" +
                                                                         $"&v=5.124");
                             photo_max = Regex.Match(photo_max, "(?<=url\\\":\\\").+?(?=\\\",\\\"type\\\":\\\"z)").Value;
-                            photo_max = photo_max.Substring(photo_max.Length - 74, 74).Replace("\\", "");
+                            photo_max = photo_max.Substring(photo_max.Length - 204, 204).Replace("\\", "");
                         }
                         else
                         {
