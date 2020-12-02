@@ -37,7 +37,7 @@
 
 .profile{
     position: absolute;
-    width: 60%;
+    width: 100%; /*60%*/
     right: 0;
     display: flex;
     justify-content: center;

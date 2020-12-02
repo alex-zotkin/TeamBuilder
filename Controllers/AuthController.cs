@@ -76,8 +76,8 @@ namespace TeamBuilder.Controllers
                          */
 
                         //{\"height\":1080,\"url\":\"https:\\/\\/sun9-47.userapi.com\\/c854024\\/v854024599\\/8f279\\/w7IVcGx88UE.jpg\",\"type\":\"z\",\"wi
-                        string photo_max;
-                        if (photo_id != "")
+                        string photo_max = "";
+                        /*if (photo_id != "")
                         {
                             photo_max = webClient.DownloadString($"https://api.vk.com/method/photos.getById?" +
                                                                         $"photos={photo_id}" +
@@ -89,7 +89,7 @@ namespace TeamBuilder.Controllers
                         else
                         {
                             photo_max = "";
-                        }
+                        }*/
                     
 
                     //РЕГИСТРАЦИЯ

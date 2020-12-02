@@ -104,7 +104,7 @@ p{
 }
 
 .button_green{
-    background-color:  rgba(20, 146, 8, 0.952);
+    background-color:  rgba(20, 146, 8, 0.952) !important;
     border: 2px solid rgb(10, 100, 2);
     color: white;
 }

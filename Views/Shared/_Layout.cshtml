@@ -7,25 +7,100 @@
     <title>@ViewData["Title"] | Конструктор команд</title>
     <link href="~/css/main.css" rel="stylesheet" />
     <link href="~/css/header.css" rel="stylesheet" />
+    <link href="~/css/notifications.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-    <div class="header">
+    <div class="header" v-cloak>
         <a asp-controller="Home" asp-action="Index" class="header_logo"><h3>Конструктор команд</h3></a>
         @if ((bool)ViewData["ProfileVisible"])
         {
-        <a asp-controller="Profile" asp-action="Edit" class="header_profile">
-            <p class="link" style="color: white;">@ViewData["FirstName"] @ViewData["LastName"]</p>
-            <img src="@ViewData["Photo50"]" alt="">
-        </a>
-        <a asp-controller="Login" asp-action="Logout" class="logout_link link" style="color: white;">(Выход)</a>
+
+            <div id="bell" v-on:click="statusclick=!statusclick">
+                <img src="https://jpnsoft.ru/wp-content/uploads/2019/01/google-alerts_logo.png">
+            </div>
+            <div v-if="statusclick">
+                <div v-if="nonotif" class="notification_block">
+                    <p id="notif">Уведомлений нет </p>
+                </div>
+                <div v-else id="notemptyblock" class="notification_block">
+                    <ul>
+                        <li v-for="men in requestmens" class="section">
+                            <img :src="men.img">
+                            <p><strong>{{ men.name }}</strong> ({{men.course}} курс) хочет вступить в вашу команду</p>
+                            <div class="notifbutton">
+                                <button class="button_green button">Принять</button>
+                                <button class="button_red button">Отклонить</button>
+                            </div>
+                            <div v-if="is_not_end_of_array"><hr></div>
+                        </li>
+                    </ul>
+
+                    <!--<p class="news" v-if="any_news" >Добавлена   <span class ="news importantwords"> новость</span></p>-->
+                </div>
+            </div>
+
+
+
+            <a asp-controller="Profile" asp-action="Edit" class="header_profile">
+                <p class="link" style="color: white;">@ViewData["FirstName"] @ViewData["LastName"]</p>
+                <img src="@ViewData["Photo50"]" alt="">
+            </a>
+            <a asp-controller="Login" asp-action="Logout" class="logout_link link" style="color: white;">(Выход)</a>
         }
     </div>
 
-        @RenderBody()
+    @RenderBody()
 
-    
+
     @RenderSection("Scripts", required: false)
+
+    <!-- HelloPreload http://hello-site.ru/preloader/ ПРЕЛОАДЕР-->
+    <style type="text/css">
+        #hellopreloader > p {
+            display: none;
+        }
+
+        #hellopreloader_preload {
+            display: block;
+            position: fixed;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 1000px;
+            background: rgba(0,0,0,0.85) url(http://hello-site.ru//main/images/preloads/tail-spin.svg) center center no-repeat;
+            background-size: 95px;
+        }
+    </style>
+    <div id="hellopreloader"><div id="hellopreloader_preload"></div><p><a href="http://hello-site.ru">Hello-Site.ru. Бесплатный конструктор сайтов.</a></p></div>
+    <script type="text/javascript">var hellopreloader = document.getElementById("hellopreloader_preload"); function fadeOutnojquery(el) { el.style.opacity = 1; var interhellopreloader = setInterval(function () { el.style.opacity = el.style.opacity - 0.05; if (el.style.opacity <= 0.05) { clearInterval(interhellopreloader); hellopreloader.style.display = "none"; } }, 16); } window.onload = function () { setTimeout(function () { fadeOutnojquery(hellopreloader); }, 950); };</script>
+    <!-- HelloPreload http://hello-site.ru/preloader/ -->
+
+
+    <script type="text/javascript">
+        new Vue({
+            el: '.header',
+            data: {
+                statusclick: false,
+                nonotif: false,
+                requestmens: [
+                    { num: '0', name: 'Алина Рамазанова', course: '2', img: 'https://sun2-4.userapi.com/impg/bFUXo6wFKR469k0G5IQgFRDYJBsKLJkw3MUGCA/p5rKZwhGl1c.jpg?size=200x0&quality=90&crop=8,69,1707,1707&sign=2f38e9cd5963331b8f6c160c0eee8c3b&ava=1' },
+                    { num: '1', name: 'Анастасия Михайлова', course: '2', img: 'https://sun2-3.userapi.com/impf/c851428/v851428040/1d43c2/9Zf4rgnylTU.jpg?size=200x0&quality=90&crop=430,8,1688,1688&sign=9e02d15164920936690fc73a6ab50e4d&ava=1' }
+                ]
+            },
+            methods: {
+                is_not_end_of_array() {
+                    return (this.num == requestmens.length);
+                },
+                any_news() {
+                    return true;/*----*/
+                }
+            }
+
+        })
+    </script>
 </body>
 </html>
