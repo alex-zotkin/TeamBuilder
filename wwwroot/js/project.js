@@ -152,9 +152,33 @@ new Vue({
         adminsproject: [],
         notadminsproject: [],
 
+        admins_pos: 0,
+        admins_pos_change: false,
+        news_pos: 300,
+        news_pos_change: false,
+        project_width: 600,
     },
     created: function () {
         this.loadData();
+
+
+        let Path = location.pathname.split("/");
+        let ProjectId = Path[Path.length - 1];
+        let cookieNews = ProjectId + "news";
+        let cookieAdmins = ProjectId + "admins";
+        if ($.cookie(cookieAdmins) == "close") {
+            this.admins_pos_change = true;
+            this.admins_pos = -235;
+            this.project_width -= 235;
+        }
+
+        if ($.cookie(cookieNews) == "close") {
+            this.news_pos_change = true;
+            this.news_pos -= 235 - this.admins_pos;
+            this.project_width -= 235;
+        } else {
+            this.news_pos += this.admins_pos;
+        }
         /*for (let i = 0; i < this.alladmins.length; i += 1) {
             if (this.alladmins[i].isAdmin) {
                 this.adminsproject.push(this.alladmins[i]);
@@ -296,7 +320,48 @@ new Vue({
                     this.loadData();
                 }
             });
+        },
+
+        box_resize(box) {
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            
+            let cookieNews = ProjectId + "news";
+            let cookieAdmins =  ProjectId + "admins";
+
+            if (box == "admin") {
+                if (this.admins_pos_change) {
+                    this.admins_pos += 235;
+                    this.news_pos += 235;
+                    this.project_width += 235;
+                    this.admins_pos_change = false;
+                    $.removeCookie(cookieAdmins);
+                }
+                else {
+                    this.admins_pos -= 235;
+                    this.news_pos -= 235;
+                    this.project_width -= 235;
+                    this.admins_pos_change = true;
+                    $.cookie(cookieAdmins, "close");
+                }
+            }
+
+            else if (box == "news") {
+                if (this.news_pos_change) {
+                    this.news_pos += 235;
+                    this.project_width += 235;
+                    this.news_pos_change = false;
+                    $.removeCookie(cookieNews);
+                }
+                else {
+                    this.news_pos -= 235;
+                    this.project_width -= 235;
+                    this.news_pos_change = true;
+                    $.cookie(cookieNews, "close");
+                }
+            }
         }
+
     },
         
 });

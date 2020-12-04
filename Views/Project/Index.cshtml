@@ -15,7 +15,7 @@
 
     <info v-if="infoBool" v-bind:infoposition="infoposition" v-bind:infodata="infoData"></info>
 
-    <div class="project_actions_box">
+    <div class="project_actions_box" :style="'width: calc(100% - ' + project_width  + 'px );'">
         <h3 v-if="!editMode">{{data.Project.Name}}</h3>
         <input id="projectName" v-else type="text" placeholder="Название проектной деятельности" :value="data.Project.Name">
 
@@ -28,9 +28,13 @@
 
 
 
-    <div class="news_box">
-        <h5>Новости</h5>
-        <div class="news">
+    <div class="news_box" :style="'right:' + news_pos + 'px'">
+        <h5 style="margin-left: -80px">
+            <span style="margin-right: 60px" class="span_arrow" v-on:click="box_resize('news')" v-if="!news_pos_change">▶</span>
+            <span style="margin-right: 60px" class="span_arrow" v-on:click="box_resize('news')" v-else>◀</span>
+            Новости
+        </h5>
+        <div class="news" v-if="!news_pos_change">
             <ul>
                 <li v-for="news in data.News">
                     <span class="delete_news" v-on:click="deleteNew(news.NewId)" v-if="data.IsUserAdmin">❌</span>
@@ -47,9 +51,13 @@
 
 
 
-    <div class="user_list_box">
-        <h5>Администраторы</h5>
-        <ul>
+    <div class="user_list_box" :style="'right:' + admins_pos + 'px'">
+        <h5 style="margin-left: -25px; margin-bottom: 20px;">
+            <span style="margin-right: 10px" class="span_arrow" v-on:click="box_resize('admin')" v-if="!admins_pos_change">▶</span>
+            <span style="margin-right: 10px" class="span_arrow" v-on:click="box_resize('admin')" v-else>◀</span>
+            Администраторы
+        </h5>
+        <ul v-if="!admins_pos_change">
             <li v-on:mousemove="ShowInfo($event, admin)" v-for="admin in data.ProjectAdmins"
                 v-on:mouseleave="infoBool = false">
                 <a target="_blank" :href="'https://vk.com/id' + admin.VkId">
@@ -61,8 +69,8 @@
                 Изменить
             </li>
         </ul>
-        <h5>Пользователи, <br> вступившие в команды</h5>
-        <ul>
+        <h5 v-if="!admins_pos_change">Пользователи, <br> вступившие в команды</h5>
+        <ul v-if="!admins_pos_change">
             <li v-for="n in 100">
                 <a href="">
                     <img src="https://sun9-62.userapi.com/c841633/v841633125/33d90/jrsG-b0oJ0w.jpg">
@@ -74,7 +82,7 @@
     </div>
 
 
-    <div class="project_list" v-if="data.IsUserAdmin">
+    <div class="project_list" :style="'width: calc(100% - ' + project_width  + 'px );'">
         <!--<div class="team team_disabled" v-if="editMode" v-for="n in 8">
         <h3 style="cursor:default;">Команда {{n}}</h3>
         <p v-if="editMode">Пока ни один студент <br> не вступил в данную команду</p>
@@ -120,7 +128,8 @@
 
                 <div class="team_buttons">
                     <button class="button button_green">Вступить</button>
-                    <a :href="'project/' + team.ProjectId + '/team/' + team.TeamId" class="button button_grey">Подробнее</a>
+                    <a href="" class="button button_grey">Подробнее</a>
+                    <!--'project/' + team.ProjectId + '/team/' + team.TeamId-->
                 </div>
             </div>
         </div>

@@ -20,10 +20,11 @@
 }
 
 
-.project_actions_box{
+.project_actions_box {
+    transition: all 0.25s ease-in-out;
     padding: 30px;
     position: absolute;
-    top:73px;
+    top: 73px;
     left: 0;
     width: calc(100% - 302px - 300px);
     height: 80px;
@@ -54,6 +55,7 @@
 
 
 .news_box {
+    z-index:0;
     width: 300px;
     height: calc(100% - 73px);
     position: fixed;
@@ -126,7 +128,7 @@
 
 
 .user_list_box {
-    /*z-index: 100;*/
+    z-index: 1;
     position: fixed;
     top: 73px;
     right: 0;
@@ -201,10 +203,26 @@
 
 
 
+.span_arrow {
+    padding: 2px 5px;
+    border-radius: 7px;
+    background: #f1f1f1;
+    text-align: center;
+    border: 2px solid #cfcfcf;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.span_arrow:hover{
+    transform: scale(1.05);
+}
 
 
-.add_admin_button{
-    margin-top:15px;
+
+
+
+.add_admin_button {
+    margin-top: 15px;
 }
 
 .add_admin_button:hover{
@@ -217,15 +235,14 @@
 
 
 .project_list {
-    transform-style: preserve-3d;
+    transition: all 0.25s ease-in-out;
     left: 0;
-    width: calc(100% - 302px - 300px);
+    /*width: calc(100% - 302px - 300px);*/
     position: absolute;
     top: calc(73px + 80px + 40px + 20px);
     display: flex;
     flex-wrap: wrap;
 }
-
 
 
 
@@ -249,6 +266,36 @@
 
 .team:nth-child(3n+1){
     margin-left: 5%;
+}
+
+
+@media (max-width: 1700px) and (min-width: 1350px) {
+    .team {
+        margin: 20px 3% 20px 0;
+        width: 43%;
+    }
+
+    .team:nth-child(1){
+        margin-left: 5%;
+    }
+
+    .team:nth-child(3n+1){
+        margin-left: 0;
+    }
+
+    .team:nth-child(2n +1){
+        margin-left: 5%;
+    }
+}
+
+
+@media (max-width: 1350px) {
+    .team {
+        margin: 20px 3% 20px 0;
+        width: 85%;
+        margin-left: 5%;
+    }
+
 }
 
 .team:hover{
