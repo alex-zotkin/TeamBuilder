@@ -46,20 +46,20 @@
                 }
                 @foreach (var t in Model.UserTeam)
                 {
-                    <a href="" class="project">
-                        <span class="link"></span>
-                        &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:red; font-weight: 600;">(/@(t.MaxCount1 + t.MaxCount2))</span>
-                        &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
-                        26 второкурсников
-                    </a>
+            <a href="/project/@t.ProjectId" class="project">
+                <span class="link"></span>
+                &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:black; font-weight: 600;">20/30</span>
+                &nbsp; &nbsp;  &nbsp; &nbsp; @t.Count1 первокурсников &nbsp; &nbsp;
+                @t.Count2 второкурсников &nbsp; &nbsp; 15 команд
+            </a>
                     <div class="team_box">
                         <span class="team_box_span">⤷</span>
                         <a href="" class="team">
-                            <div class="img" style="background-image: url(https://i.gifer.com/fxVu.gif);"></div>
+                            <div class="img" style="background-image: url(@t.Img);"></div>
                             <span class="link">@t.Title</span>
-                            &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(2/8)</span>
-                            &nbsp; &nbsp;  &nbsp; &nbsp; 17 первокурсников &nbsp; &nbsp;
-                            26 второкурсников &nbsp; &nbsp; 15 команд
+                            &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;<span style="color:green; font-weight: 600;">(@(t.Count1 + t.Count2)/@(t.MaxCount1 + t.MaxCount2))</span>
+                            &nbsp; &nbsp;  &nbsp; &nbsp; @t.Count1 первокурсников &nbsp; &nbsp;
+                            @t.Count2 второкурсников
                         </a>
                     </div>
                 }
@@ -156,13 +156,13 @@
 
                         <h4 style="margin-top: 50px; margin-bottom: 10px;
                                padding: 30px 26% 0; border-top: 2px solid lightgrey;">
-                            Критерии оценивания
+                            Этапы оценивания
                         </h4>
                         <table>
                             <tbody>
                                 <tr>
                                     <th width="20">#</th>
-                                    <th width="400">Критерий оценивания</th>
+                                    <th width="400">Этап оценивания</th>
                                     <th width="100">Макс. количество баллов (по 100 шкале)</th>
                                     <th width="25"></th>
                                 </tr>
@@ -182,7 +182,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <p class="button button_green" v-on:click="addKrit()" style="margin-top: 30px;">+ Добавить критерий</p>
+                        <p class="button button_green" v-on:click="addKrit()" style="margin-top: 30px;">+ Добавить этап</p>
                         <button class="button button_blue" type="submit" v-if="submitButton">Создать</button>
                         <button class="button button_blue" type="submit" v-else disabled>Идет создание команды...</button>
                     </form>

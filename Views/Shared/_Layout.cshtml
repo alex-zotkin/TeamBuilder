@@ -20,26 +20,57 @@
 
             <div id="bell" v-on:click="statusclick=!statusclick">
                 <img src="https://jpnsoft.ru/wp-content/uploads/2019/01/google-alerts_logo.png">
+                <div id="notifCounter" v-if="notifCount > 0">{{notifCount}}</div>
             </div>
             <div v-if="statusclick">
-                <div v-if="nonotif" class="notification_block">
+                <div v-if="notifCount == 0" class="notification_block">
                     <p id="notif">Уведомлений нет </p>
                 </div>
                 <div v-else id="notemptyblock" class="notification_block">
                     <ul>
-                        <li v-for="men in requestmens" class="section">
-                            <img :src="men.img">
-                            <p><strong>{{ men.name }}</strong> ({{men.course}} курс) хочет вступить в вашу команду</p>
+                        <li v-for="notifTeamLead in notifications.ApplicationsForTeamlead" class="notifSection">
+                            <img :src="notifTeamLead.User.Photo50">
+                            <p><strong>{{ notifTeamLead.User.FirstName }} {{ notifTeamLead.User.LastName }}</strong> ({{notifTeamLead.User.Course}} курс) хочет вступить команду <strong> {{notifTeamLead.Team.Title}} </strong></p>
                             <div class="notifbutton">
-                                <button class="button_green button">Принять</button>
-                                <button class="button_red button">Отклонить</button>
+                                <button class="button_green button" v-on:click="checkApplication(notifTeamLead.Team.TeamId, notifTeamLead.User.UserId, true)">Принять</button>
+                                <button class="button_red button" v-on:click="checkApplication(notifTeamLead.Team.TeamId, notifTeamLead.User.UserId, false)">Отклонить</button>
                             </div>
                             <div v-if="is_not_end_of_array"><hr></div>
+                        </li>
+
+                        <li v-for="notifUser in notifications.ApplicationsForUser" class="notifSection" style="background-color: rgba(0,0,255,0.04)">
+                            <img v-if="!notifUser.Checked" src="https://i.gifer.com/XVo6.gif">
+                            <p v-if="!notifUser.Checked">
+                                Ваша заявка на вступление в команду <strong> {{notifUser.Team.Title}} </strong>
+                                обрабатывается тимлидом команды <a :href="'https://vk.com/id' + notifUser.Team.TeamLead.VkId" class="link">{{notifUser.Team.TeamLead.FirstName}} {{notifUser.Team.TeamLead.LastName}}</a>
+                            </p>
+                            <div class="notifbutton" v-if="!notifUser.Checked">
+                                <button class="button_orange button" v-on:click="deleteApplication(notifUser.Team.TeamId, notifUser.User.UserId)">Отменить заявку</button>
+                            </div>
+
+
+                            <img v-if="notifUser.Checked && notifUser.Successed" src="https://i.ebayimg.com/00/s/MjU2WDI1Ng==/z/01EAAOSwlndZJ7TS/$_62.PNG">
+                            <p v-if="notifUser.Checked && notifUser.Successed">
+                                Ваша заявка на вступление в команду <strong> {{notifUser.Team.Title}} </strong>
+                                была <span style="color: green;">принята!</span>
+</p>
+
+                            <img v-if="notifUser.Checked && !notifUser.Successed" src="https://cdn130.picsart.com/300896026343211.png">
+                            <p v-if="notifUser.Checked && !notifUser.Successed">
+                                Ваша заявка на вступление в команду <strong> {{notifUser.Team.Title}} </strong>
+                                была <span style="color: red;">отклонена</span>
+                            </p>
+
+
+                            <div class="notifbutton" v-if="notifUser.Checked">
+                                <button class="button_grey button" v-on:click="deleteApplication(notifUser.Team.TeamId, notifUser.User.UserId)">Закрыть</button>
+                            </div>
                         </li>
                     </ul>
 
                     <!--<p class="news" v-if="any_news" >Добавлена   <span class ="news importantwords"> новость</span></p>-->
                 </div>
+
             </div>
 
 
@@ -81,27 +112,7 @@
     <!-- HelloPreload http://hello-site.ru/preloader/ -->
 
 
-    <script type="text/javascript">
-        new Vue({
-            el: '.header',
-            data: {
-                statusclick: false,
-                nonotif: false,
-                requestmens: [
-                    { num: '0', name: 'Алина Рамазанова', course: '2', img: 'https://sun1-27.userapi.com/impf/c841138/v841138158/45c5/Br6BsclETUU.jpg?size=50x0&quality=96&crop=0,0,805,805&sign=59cdaa34091d24c36dd40fa57df9d09b&c_uniq_tag=QBcMSjzfYTI1iM9t9O3kTeRKuXcEevc-R0Xk__Z7BP4&ava=1' },
-                    { num: '1', name: 'Анастасия Михайлова', course: '2', img: 'https://sun2-3.userapi.com/impf/c851428/v851428040/1d43c2/9Zf4rgnylTU.jpg?size=200x0&quality=90&crop=430,8,1688,1688&sign=9e02d15164920936690fc73a6ab50e4d&ava=1' }
-                ]
-            },
-            methods: {
-                is_not_end_of_array() {
-                    return (this.num == requestmens.length);
-                },
-                any_news() {
-                    return true;/*----*/
-                }
-            }
 
-        })
-    </script>
+    <script type="text/javascript" src="~/js/header.js"></script>
 </body>
 </html>

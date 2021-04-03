@@ -1,0 +1,175 @@
+﻿<link href="~/css/team.css" rel="stylesheet" />
+
+<div id="app" v-cloak>
+    <div class="team_block">
+        <div class="box about">
+
+            <div class="team_img" :style="'background-image: url(' + data.Team.Img + ');'">
+                <form id="change_img_block" v-if="data.isUserTeamLead">
+                    <input type="text" value="" placeholder="Ссылка на изображение" id="img_link" v-model="imgSrc"/>
+                    <button class="button button_blue" v-on:click.prevent="changeImg">Сохранить</button>
+                </form>
+            </div>
+            
+
+            <label>Название проекта</label>
+            <h2 :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputTitle" v-on:click="showInput('inputTitle')">{{data.Team.Title}}</h2>
+            <input type="text" name="inputTitle" :value="data.Team.Title" v-if="inputTitle" v-on:keyup.enter="sendChanges('inputTitle')" />
+
+            <label>Тип проекта</label>
+            <p :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputProjectType" v-on:click="showInput('inputProjectType')">{{data.Team.Type}}</p>
+            <input type="text" name="inputProjectType" :value="data.Team.Type" v-if="inputProjectType" v-on:keyup.enter="sendChanges('inputProjectType')"/>
+
+            <label>Описание</label>
+            <p :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputDescription" v-on:click="showInput('inputDescription')">{{data.Team.Description}}</p>
+            <textarea rows="5" cols="30" name="inputDescription" v-if="inputDescription" v-on:keyup.enter="sendChanges('inputDescription')">{{data.Team.Description}}</textarea>
+            <h2>
+                Участники
+            </h2>
+            <ul id="hor_scroll" class="team_users">
+                <span v-for="user in data.Users">
+                    <a :href="'https://vk.com/id' + user.VkId">
+                        <li>
+                            <div class="team_user_img" :style="'background-image: url(' + user.Photo50 + ');'"></div>
+                            <p class="link">
+                                {{user.FirstName}} {{user.LastName}}
+                                <br> {{user.Course}} курс
+                                <br><b v-if="data.Team.TeamLead.UserId == user.UserId">капитан</b>
+                            </p>
+                            <input type="button" value="👑">
+                        </li>
+                    </a>
+                </span>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="team_block">
+
+        <div class="box chat">
+            <h2>Приватный чат</h2>
+            <p><em>Сообщения в чате видны только участникам команды</em></p>
+            <ul v-if="data.IsUserInTeam">
+                <li v-for="mes in data.Chat">
+                    <div v-if="mes.User.UserId == data.CurrentUser.UserId" class="mess myMes">
+                        <a :href="'https://vk.com/id' + mes.User.UserVkId">
+                            <img :title="mes.User.FirstName + '' + mes.User.LastName" style="width: 30px; border-radius: 90px;" :src="mes.User.Photo50" />
+                        </a>
+                        <div>
+                            <a :href="'https://vk.com/id' + mes.User.VkId" style="text-decoration: none;"><label style="cursor:pointer;">{{mes.User.FirstName}} {{mes.User.LastName}}</label></a>
+                            <p>{{mes.Text}}</p>
+                        </div>
+                        <span style="cursor:pointer" v-on:click="delMes(mes.ChatId)">
+                            ❌
+                        </span>
+                    </div>
+
+                    <div v-else class="mess">
+                        <a :href="'https://vk.com/id' + mes.User.VkId">
+                            <img :title="mes.User.FirstName + '' + mes.User.LastName" style="width: 30px; border-radius: 90px;" :src="mes.User.Photo50" />
+                        </a>
+                        <div>
+                            <a :href="'https://vk.com/id' + mes.User.UserVkId" style="text-decoration: none;"><label style="cursor:pointer;">{{mes.User.FirstName}} {{mes.User.LastName}}</label></a>
+                            <p>{{mes.Text}}</p>
+                        </div>
+                        <span v-if="mes.User.UserId == data.CurrentUser.UserId" style="cursor: pointer;">
+                            ❌
+                        </span>
+                    </div>
+                </li>
+            </ul>
+
+
+            <ul v-else>
+                <h3>У вас нет доступа к просмотру чата этой команды</h3>
+            </ul>
+
+            <textarea rows="5" v-if="!chatLoading && data.IsUserInTeam" placeholder="Нажмите Enter, чтобы отправить сообщение" v-model="textChat" v-on:keyup.enter="sendMes"></textarea>
+            <textarea rows="5" v-else-if="chatLoading && data.IsUserInTeam" placeholder="Сообщение загружается..." disabled></textarea>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+    <div class="team_block">
+        <div class="box marks">
+            <h2>Оценки</h2>
+            <table>
+                <tr>
+                    <th>Этап</th>
+                    <th>Сумарная оценка</th>
+                </tr>
+
+                <tr v-for="mark in data.Marks">
+                    <td>{{mark.Name}}</td>
+                    <td> {{mark.Points}}/{{mark.MaxPoints}}</td>
+                </tr>
+                <tr>
+                    <td><b>Итоговая оценка</b></td>
+                    <td> {{data.Summary}} / {{data.SumMaxPoints}}</td>
+                </tr>
+            </table>
+            @*<h5 style="margin-bottom: 15px;">1 место среди всех команд</h5>*@
+            <a :href="'/project/' + data.Team.ProjectId + '/marks'">Перейти к общей таблице результатов</a>
+        </div>
+
+
+
+
+
+        <div class="box files">
+            <h2>Файлы</h2>
+            <p><em>загружаемые файлы любого формата</em></p>
+            <ul v-for="(file, i) in data.Files">
+                <li><a :href="'http://file:///' + file.Path" class="link" target="_blank">{{i + 1}}. {{file.Name}}</a>
+                    <span v-on:click="delFile(file.Id)" style="cursor: pointer;">❌</span>
+                </li>
+            </ul>
+            <form asp-action="LoadFiles" asp-controller="Team" method="post" enctype="multipart/form-data" v-if="data.IsUserInTeam || data.IsUserAdmin">
+                <input type="file" name="uploadedFile" /><br>
+                <input type="hidden" name="TeamId" :value="data.Team.TeamId">
+                <input type="submit" value="Загрузить" class="button button_blue"/>
+            </form>
+        </div>
+
+
+
+
+
+        <div class="box links">
+            <h2>Ссылки</h2>
+            <p><em>(гитхаб, другие внешние ресурсы)</em></p>
+            <ul v-if="linksEdit">
+                <li v-for="link in links">
+                    <input v-model="link.Name" type="text" placeholder="Название" style="width: 80px; margin-right: 10px;" />
+                    <input v-model="link.Value" type="text" placeholder="Ссылка" />
+                    <span v-on:click="delLink(link.Id)" style="cursor: pointer;">❌</span>
+                </li>
+            </ul>
+            <div style="display: flex; flex-direction: row;">
+                <input type="button" value="Добавить ссылку" class="button button_green" v-if="linksEdit" v-on:click="addLink" style="margin-right: 10px;"/>
+                <input type="button" value="Сохранить" class="button button_blue" v-if="linksEdit" v-on:click="saveLinks" />
+            </div>
+
+
+            <ul v-if="!linksEdit">
+                <li v-for="(link, i) in links">
+                    <p style="margin-right: 10px;">{{i+1}}. {{link.Name}}</p> - &nbsp;
+                    <a :href="'https://' + link.Value" class="link" target="_blank">{{link.Value}}</a>
+                </li>
+            </ul>
+            <input type="button" value="Редактировать" class="button button_blue" v-if="!linksEdit && (data.IsUserInTeam || data.IsUserAdmin)" v-on:click="linksEdit = true"/>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/team.js"></script>

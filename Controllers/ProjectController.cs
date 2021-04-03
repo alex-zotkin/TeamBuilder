@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 //using Newtonsoft.Json.Linq;
 using TeamBuilder.Models;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace TeamBuilder.Controllers
 {
@@ -86,6 +87,7 @@ namespace TeamBuilder.Controllers
                 {
                     Team Team = new Team();
                     Team.Title = $"Команда #{index}";
+                    Team.Type = "Пустой тип команды";
                     Team.Comments = new List<Comment>();
                     Team.Description = "Пустая команда";
                     Team.MaxCount1 = course1;
@@ -115,12 +117,12 @@ namespace TeamBuilder.Controllers
             {
                 List<Mark> Marks = new List<Mark>();
                 //Оценки пользователей
-                Mark UMark = new Mark();
+                /*Mark UMark = new Mark();
                 UMark.MaxPoints = 10;
                 UMark.Name = "Оценки студентов";
-                UMark.UserMark = new List<UserMark>();
+                //UMark.UserMark = new List<UserMark>();
                 UMark.Team = t;
-                Marks.Add(UMark);
+                Marks.Add(UMark);*/
                 //db.Marks.Add(UMark);
                 //Оценки админов
                 foreach (var m in MarkNames)
@@ -129,11 +131,14 @@ namespace TeamBuilder.Controllers
                     Mark.Name = m.Key;
                     Mark.MaxPoints = m.Value;
                     Mark.Team = t;
-                    Mark.UserMark = new List<UserMark>();
+                    Mark.User = null;
+                    Mark.Points = 0;
+
+                    //Mark.UserMark = new List<UserMark>();
                     Marks.Add(Mark);
                     //db.Marks.Add(Mark);
                 }
-                t.Marks = Marks;
+                //t.Marks = Marks;
             }
 
             db.Projects.Add(Project);
@@ -146,36 +151,72 @@ namespace TeamBuilder.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AllInfoAboutProject(int id)
+        public async Task<string> AllInfoAboutProject(int id)
         {
+           
             int VkId = int.Parse(HttpContext.Request.Cookies["UserData"]);
             User User = await db.Users.Where(u => u.VkId == VkId).FirstAsync();
+            IEnumerable<Team> Teams = await db.Teams.Where(t => t.ProjectId == id).ToListAsync();
+            
 
             bool IsUserAdmin = await db.ProjectUsers.Where(u => u.UserId == User.UserId).Select(p => p.ProjectId).ContainsAsync(id);
-            IEnumerable<User> ProjectAdmins = await db.ProjectUsers.Where(p => p.ProjectId == id).Select(u => u.User).ToListAsync();
-            IEnumerable<User> UsersInTeams = await db.TeamUsers.Where(t => t.Team.ProjectId == id)
+            bool IsUserJury = await db.ProjectJury.Where(u => u.UserId == User.UserId).Select(p => p.ProjectId).ContainsAsync(id);
+
+            var IsUserInTeamTemp = await db.TeamUsers.Where(t => t.Team.ProjectId == id).Where(u =>u.User == User).Select(t => t.Team).FirstOrDefaultAsync();
+            int IsUserInTeam = IsUserInTeamTemp != null ? IsUserInTeamTemp.TeamId : -1;
+
+            IEnumerable <User> ProjectAdmins = await db.ProjectUsers.Where(p => p.ProjectId == id).Select(u => u.User).ToListAsync();
+            IEnumerable<User> ProjectJury = await db.ProjectJury.Where(p => p.ProjectId == id).Select(u => u.User).ToListAsync();
+            IEnumerable<User> Users = await db.TeamUsers.Where(t => t.Team.ProjectId == id)
                                             .Select(u => u.User).ToListAsync();
-            UsersInTeams = UsersInTeams.OrderBy(u => u.LastName).ThenBy(u=>u.FirstName);
+            Users = Users.OrderBy(u => u.LastName).ThenBy(u=>u.FirstName);
             Project Project = await db.Projects.Where(p => p.ProjectId == id).FirstAsync();
 
             IEnumerable<User> AllAdmins = db.Users.Where(u => (u.Course == 3)).ToArray().Except(ProjectAdmins.ToArray()).ToList();
+            IEnumerable<User> AllJury = db.Users.Where(u => (u.Course == 3)).ToArray().Except(ProjectJury.ToArray()).ToList();
 
             IEnumerable<New> News = await db.News.Where(n => n.ProjectId == id).ToListAsync();
 
-            IEnumerable<Team> Teams = await db.Teams.Where(t => t.ProjectId == id).ToListAsync();
+            
+            Dictionary<int, List<string>> TeamUsers = new Dictionary<int, List<string>>();
+            foreach(Team T in Teams)
+            {
+                List<string> ls = new List<string>();
+                    foreach (User U in db.TeamUsers.Where(t=>t.Team == T).Select(u=>u.User).ToList())
+                    {
+                        string temp = "";
+                        temp += U.FirstName;
+                        temp += "@" + U.LastName;
+                        temp += "@" + U.VkId;
+                        temp += "@" + U.Photo50;
+                        ls.Add(temp);
+                    }
+                TeamUsers[T.TeamId] = ls;
+            }
+
+
+            List<int> UserApplicationTeamsId = await db.Applications.Where(t => Teams.Contains(t.Team)).Where(u => u.User == User).Select(t => t.Team.TeamId).ToListAsync();
+            List<Application> ApplicationsForUser = await db.Applications.Where(t => Teams.Contains(t.Team)).Where(u => u.User == User).ToListAsync();
 
             AllInfoAboutProject data = new AllInfoAboutProject{ CurrentUser = User,
                                                                 IsUserAdmin = IsUserAdmin,
+                                                                IsUserJury = IsUserJury,
+                                                                IsUserInTeam = IsUserInTeam,
                                                                 ProjectAdmins = ProjectAdmins,
+                                                                ProjectJury = ProjectJury,
                                                                 AllAdmins = AllAdmins,
-                                                                UsersInTeams = UsersInTeams,
+                                                                AllJury = AllJury,
+                                                                Users = Users,
                                                                 Project = Project,
                                                                 News = News,
-                                                                Teams = Teams
-            };
+                                                                Teams = Teams,
+                                                                TeamUsers = TeamUsers,
+                                                                UserApplicationTeamsId = UserApplicationTeamsId,
+                                                                ApplicationsForUser = ApplicationsForUser,
+            };  
 
-            //JsonConvert.SerializeObject(data)
-            return Json(JsonSerializer.Serialize(data));
+            //JsonSerializer.Serialize(data) 
+            return JsonConvert.SerializeObject(data);
         }
         
 
@@ -222,6 +263,64 @@ namespace TeamBuilder.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AddInProjectJury(int id, string VkId)
+        {
+            Project Project = await db.Projects.Where(p => p.ProjectId == id).FirstAsync();
+            User User = await db.Users.Where(u => u.VkId == int.Parse(VkId)).FirstAsync();
+            ProjectJury PJ = new ProjectJury();
+            PJ.Project = Project;
+            PJ.ProjectId = Project.ProjectId;
+            PJ.User = User;
+            PJ.UserId = User.UserId;
+            db.ProjectJury.Add(PJ);
+            
+
+            List<Team> Teams = await db.Teams.Where(p => p.ProjectId == id).ToListAsync();
+            List<Mark> Marks = await db.Marks.Where(t => t.Team.ProjectId == id).Where(u => u.User == null).ToListAsync();
+
+
+            foreach (Mark m in Marks)
+            {
+                if (m.Name != "Оценки студентов")
+                {
+                    Mark NewMark = new Mark {
+                        MaxPoints = m.MaxPoints,
+                        Name = m.Name,
+                        Team = m.Team,
+                        Points = m.Points,
+                        User = User,  
+                    };
+                    await db.Marks.AddAsync(NewMark);
+                }
+            }
+
+            db.SaveChanges();
+
+            return Ok();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFromProjectJury(int id, string VkId)
+        {
+            Project Project = await db.Projects.Where(p => p.ProjectId == id).FirstAsync();
+            User User = await db.Users.Where(u => u.VkId == int.Parse(VkId)).FirstAsync();
+
+            ProjectJury PJ = await db.ProjectJury.Where(p => p.ProjectId == id).Where(u => u.User == User).FirstAsync();
+            db.ProjectJury.Remove(PJ);
+            List<Mark> Marks = await db.Marks.Where(t => t.Team.ProjectId == id).Where(u => u.User == User).ToListAsync();
+            foreach (Mark m in Marks)
+            {
+                db.Marks.Remove(m);
+            }
+            
+
+            db.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddInProjectNews(int id, string VkId, string text)
         {
             User User = await db.Users.Where(u => u.VkId == int.Parse(VkId)).FirstAsync();
@@ -242,6 +341,81 @@ namespace TeamBuilder.Controllers
         {
             New New = await db.News.Where(n => n.NewId == newId).FirstAsync();
             db.News.Remove(New);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> JoinTeam(string VkId, int TeamId)
+        {
+            User User = await db.Users.Where(u => u.VkId == int.Parse(VkId)).FirstAsync();
+            int countUsersInTeam = db.TeamUsers.Where(t => t.TeamId == TeamId).Select(u => u.User).Count();
+            Team Team = await db.Teams.Where(t => t.TeamId == TeamId).FirstAsync();
+            TeamUser TU = new TeamUser
+            {
+                Team = Team,
+                TeamId = TeamId,
+                User = User, 
+                UserId = User.UserId
+            };
+
+            if(countUsersInTeam == 0)
+            {
+                if (User.Course == 1 && Team.Count1 < Team.MaxCount1)
+                {
+                    Team.TeamLead = User;
+                    Team.Count1 += 1;
+                    await db.TeamUsers.AddAsync(TU);
+                    
+                }
+                else if (User.Course == 2 && Team.Count2 < Team.MaxCount2)
+                {
+                    Team.TeamLead = User;
+                    Team.Count2 += 1;
+                    await db.TeamUsers.AddAsync(TU);
+                }
+                List<Application> Applications = await db.Applications.Where(u => u.User == User).ToListAsync();
+                db.Applications.RemoveRange(Applications);
+            }
+            else
+            {
+                Application Application = new Application {
+                    Team = Team,
+                    User = User,
+                    Checked = false,
+                    Successed = false,
+                    Date = DateTime.Now,
+                };
+                await db.Applications.AddAsync(Application);
+            }
+
+            await db.SaveChangesAsync();
+            return Ok();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ExitTeam(string VkId, int TeamId)
+        {
+            User User = await db.Users.Where(u => u.VkId == int.Parse(VkId)).FirstAsync();
+            Team Team = await db.Teams.Where(t => t.TeamId == TeamId).FirstAsync();
+            TeamUser TU = await db.TeamUsers.Where(u => u.User == User).FirstAsync();
+            db.TeamUsers.Remove(TU);
+
+            List<Application> UserApplication = await db.Applications.Where(t => t.Team.ProjectId == Team.ProjectId).Where(u => u.User == User).ToListAsync();
+            db.Applications.RemoveRange(UserApplication);
+            await db.SaveChangesAsync();
+
+
+            int countUsersInTeam = db.TeamUsers.Where(t => t.TeamId == TeamId).Select(u => u.User).Count();
+            if (countUsersInTeam == 0)
+            {
+                Team.TeamLead = null;
+            }
+
+            Team.Count1 = db.TeamUsers.Where(t => t.Team == Team).Where(u=>u.User.Course == 1).Select(u => u.User).Count();
+            Team.Count2 = db.TeamUsers.Where(t => t.Team == Team).Where(u => u.User.Course == 2 || u.User.Course == 3).Select(u => u.User).Count();
             await db.SaveChangesAsync();
 
             return Ok();

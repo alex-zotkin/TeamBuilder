@@ -1,7 +1,5 @@
-﻿<link href="~/css/project.css" rel="stylesheet" />
-
-<br /><br /><br />
-            <h2></h2>
+﻿
+<link href="~/css/project.css" rel="stylesheet" />
 
 <div id="app" v-cloak>
     <delete_alert v-if="deleteAlert" v-on:deletealert="deletealert"></delete_alert>
@@ -13,6 +11,14 @@
                v-on:deleteadmin="deleteadmin"
                v-on:close="addAdminBox = false"></add_admin>
 
+
+    <add_jury v-if="addJuryBox"
+              :notadminsproject="notjuryproject"
+              :adminsproject="juryproject"
+              v-on:addjury="addjury"
+              v-on:deleteadmin="deletejury"
+              v-on:close="addJuryBox = false"></add_jury>
+
     <info v-if="infoBool" v-bind:infoposition="infoposition" v-bind:infodata="infoData"></info>
 
     <div class="project_actions_box" :style="'width: calc(100% - ' + project_width  + 'px );'">
@@ -21,14 +27,15 @@
 
         <div class="admin_actions" v-if="data.IsUserAdmin">
             <div class="button button_red" v-if="!editMode" v-on:click="deleteAlert=true">Удалить ПД</div>
-            <div class="button button_green" v-if="!editMode" v-on:click="StartEdit">Редактировать</div>
-            <div class="button button_grey" v-else v-on:click="EndEdit">Сохранить</div>
+            @*<div class="button button_green" v-if="!editMode" v-on:click="StartEdit">Редактировать</div>*@
+            @*<div class="button button_grey" v-else v-on:click="EndEdit">Сохранить</div>*@
         </div>
     </div>
 
 
 
     <div class="news_box" :style="'right:' + news_pos + 'px'">
+        <h5 class="box_close_title" v-if="news_pos_change">Новости</h5>
         <h5 style="margin-left: -80px">
             <span style="margin-right: 60px" class="span_arrow" v-on:click="box_resize('news')" v-if="!news_pos_change">▶</span>
             <span style="margin-right: 60px" class="span_arrow" v-on:click="box_resize('news')" v-else>◀</span>
@@ -46,12 +53,13 @@
             </ul>
             <textarea v-if="data.IsUserAdmin" :disabled="news_textarea_desabled" rows="7" placeholder="Текст новости (для отправки нажмите Enter)" v-model="news_text" v-on:keyup.enter.preventDefault="addNew()"></textarea>
         </div>
-        
+
     </div>
 
 
 
     <div class="user_list_box" :style="'right:' + admins_pos + 'px'">
+        <h5 class="box_close_title" v-if="admins_pos_change" style="left:-55px; top: 160px;">Администраторы</h5>
         <h5 style="margin-left: -25px; margin-bottom: 20px;">
             <span style="margin-right: 10px" class="span_arrow" v-on:click="box_resize('admin')" v-if="!admins_pos_change">▶</span>
             <span style="margin-right: 10px" class="span_arrow" v-on:click="box_resize('admin')" v-else>◀</span>
@@ -69,28 +77,44 @@
                 Изменить
             </li>
         </ul>
-        <h5 v-if="!admins_pos_change">Пользователи, <br> вступившие в команды</h5>
-        <ul v-if="!admins_pos_change">
-            <li v-for="n in 100">
-                <a href="">
-                    <img src="https://sun9-62.userapi.com/c841633/v841633125/33d90/jrsG-b0oJ0w.jpg">
-                    <p>Пользователь</p>
+
+        <h5 v-if="!admins_pos_change">Жюри</h5>
+        <ul v-if="!admins_pos_change" style="margin-bottom: 50px;">
+            <li v-on:mousemove="ShowInfo($event, jury)" v-for="jury in data.ProjectJury"
+                v-on:mouseleave="infoBool = false">
+                <a target="_blank" :href="'https://vk.com/id' + jury.VkId">
+                    <img :src="jury.Photo50">
+                    <p>{{jury.FirstName}} {{jury.LastName}}</p>
                 </a>
             </li>
-
+            <li class="button button_green add_admin_button" v-on:click="addJuryBox = true" v-if="data.IsUserAdmin">
+                Изменить
+            </li>
+        </ul>
+        <h5 v-if="!admins_pos_change">Пользователи, <br> вступившие в команды</h5>
+        <ul v-if="!admins_pos_change">
+            <li v-for="user in data.Users" v-on:mousemove="ShowInfo($event, user)"
+                                           v-on:mouseleave="infoBool = false">
+                <a href="">
+                    <img :src="user.Photo50">
+                    <p>{{user.FirstName}} {{user.LastName}}</p>
+                </a>
+            </li>
         </ul>
     </div>
 
 
     <div class="project_list" :style="'width: calc(100% - ' + project_width  + 'px );'">
         <!--<div class="team team_disabled" v-if="editMode" v-for="n in 8">
-        <h3 style="cursor:default;">Команда {{n}}</h3>
-        <p v-if="editMode">Пока ни один студент <br> не вступил в данную команду</p>
-        <h2 v-if="editMode">3 Х 2</h2>
-    </div>-->
+            <h3 style="cursor:default;">Команда {{n}}</h3>
+            <p v-if="editMode">Пока ни один студент <br> не вступил в данную команду</p>
+            <h2 v-if="editMode">3 Х 2</h2>
+        </div>-->
 
-        <div class="team team_active" v-for="team in data.Teams">
-            <span class="team_status" style="background-color: rgba(20, 146, 8, 0.952)">Запись открыта</span>
+        <div class="team team_active" v-for="team in data.Teams" :style="{borderColor: (data.IsUserInTeam == team.TeamId) ? 'rgba(0,0,255,0.4)' : 'lightgray', background: (data.IsUserInTeam == team.TeamId) ? 'rgba(0,0,255,0.04)' : 'white'}">
+            <span class="team_status" style="background-color: #ff9900" v-if="(typeof applications[team.TeamId] != 'undefined') && !applications[team.TeamId].Checked">Ваша заявка обрабатывается &nbsp; <img style="width:20px;" src="https://i.gifer.com/XVo6.gif" /></span>
+            <span class="team_status" style="background-color: rgba(20, 146, 8, 0.952)" v-else-if="data.IsUserInTeam != team.TeamId">Запись открыта</span>
+            <span class="team_status" style="background-color: rgba(0,0,255,0.8)" v-else-if="data.IsUserInTeam == team.TeamId">Вы состоите в данной команде</span>
             <span class="team_delete" v-if="editMode">❌</span>
             <div class="team_img" :style=" 'background-image: url(' + team.Img +  ')'"></div>
 
@@ -99,14 +123,20 @@
                     <span>Проект</span>
                     <h3 class="team_title" v-if="!editMode">{{team.Title}}</h3>
                 </div>
-                <input type="text" :value="team.Title" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode"/>
+                <input type="text" :value="team.Title" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode" />
+
+                <div class="team_block">
+                    <span>Тип проекта</span>
+                    <p class="team_description">
+                        {{team.Type}}
+                    </p>
+                </div>
 
                 <div class="team_block">
                     <span>Описание</span>
                     <p class="team_description">
                         {{team.Description}}
                     </p>
-
                 </div>
 
                 <div class="team_block">
@@ -119,36 +149,39 @@
                 </div>
 
                 <div class="team_block">
-                    <span>Участники  &nbsp; 2/{{team.MaxCount1}} &nbsp; 3/{{team.MaxCount2}}</span>
+                    <span>Участники  &nbsp; <span :style="{color: (team.Count1 == team.MaxCount1) ? 'red' : 'green'}">{{team.Count1}}/{{team.MaxCount1}}</span> &nbsp; <span :style="{color: (team.Count2 == team.MaxCount2) ? 'red' : 'green'}">{{team.Count2}}/{{team.MaxCount2}}</span></span>
                     <div class="team_users">
-                        <p v-if="team.Users == null">Никто еще не вступил в эту команду...</p>
-                        <a v-for="u in team.Users" href="#" style="background-image: url(https://sun1-88.userapi.com/impg/bFUXo6wFKR469k0G5IQgFRDYJBsKLJkw3MUGCA/p5rKZwhGl1c.jpg?size=50x0&quality=88&crop=8,69,1707,1707&sign=36982c2b1c6a59af7528c557aed510f1&c_uniq_tag=i2rIiVEJl2iN8mZWIGDU7Uw2osMnQ8NmCy4NjZEcjAA&ava=1)"></a>
+                        <p v-if="data.TeamUsers[team.TeamId].length == 0">Никто еще не вступил в эту команду...</p>
+                        <a v-for="u in data.TeamUsers[team.TeamId]" :href="'https://vk.com/id' + u[2]" :style="{backgroundImage: 'url(' + u[3] + ')'}"></a>
                     </div>
                 </div>
 
                 <div class="team_buttons">
-                    <button class="button button_green">Вступить</button>
-                    <a href="" class="button button_grey">Подробнее</a>
+                    <button class="button button_green" v-if="!(data.IsUserAdmin || data.IsUserJury || data.IsUserInTeam != -1) && !data.UserApplicationTeamsId.includes(team.TeamId)" v-on:click="joinTeam(team.TeamId)">Вступить</button>
+                    <button class="button button_orange" v-else-if="(typeof applications[team.TeamId] != 'undefined') && !applications[team.TeamId].Checked" v-on:click="deleteApplication(team.TeamId, data.CurrentUser.UserId)">Отменить заявку</button>
+                    <button class="button button_red" v-else-if="(typeof applications[team.TeamId] != 'undefined') && applications[team.TeamId].Checked && !applications[team.TeamId].Successed" v-on:click="deleteApplication(team.TeamId, data.CurrentUser.UserId)">Ваша заявка отклонена</button>
+                    <button class="button button_red" v-else-if="data.IsUserInTeam == team.TeamId" v-on:click="exitTeam(team.TeamId)">Выйти</button>
+                    <a :href="'/project/' + team.ProjectId + '/team/' + team.TeamId" class="button button_grey">Подробнее</a>
                     <!--'project/' + team.ProjectId + '/team/' + team.TeamId-->
                 </div>
             </div>
         </div>
 
         <!--<div class="team team_disabled" v-if="editMode">
-        <input type="text" placeholder="Название команды" value="Команда" style="text-align: center;">
+            <input type="text" placeholder="Название команды" value="Команда" style="text-align: center;">
 
-        <div class="editSizeInput">
-            <div class="label">
-                <label>1 курс</label>
-                <input type="number" value="3">
+            <div class="editSizeInput">
+                <div class="label">
+                    <label>1 курс</label>
+                    <input type="number" value="3">
+                </div>
+                <h2>Х</h2>
+                <div class="label">
+                    <label>2 курс</label>
+                    <input type="number" value="2">
+                </div>
             </div>
-            <h2>Х</h2>
-            <div class="label">
-                <label>2 курс</label>
-                <input type="number" value="2">
-            </div>
-        </div>
-    </div>-->
+        </div>-->
 
 
 

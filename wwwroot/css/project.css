@@ -104,6 +104,8 @@
     margin-bottom: 30px;
     font-size: 16px;
     width:80%;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 
@@ -169,8 +171,10 @@
 .user_list_box ul li{
     transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
     cursor: pointer;
-    margin-left: -30px;
+    /*margin-left: -30px;*/
     padding: 5px 20px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .user_list_box ul li:hover{
@@ -200,7 +204,16 @@
     margin-right: 20px;
 }
 
-
+.box_close_title {
+    position: absolute;
+    transform: rotate(90deg);
+    left: -13px;
+    top: 110px;
+    /*left: 25px;
+    top: 75px;
+    word-wrap: break-word;
+    width: 1ch;*/
+}
 
 
 .span_arrow {
@@ -250,6 +263,8 @@
 
 
 .team {
+    overflow: hidden;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -345,14 +360,20 @@
 .team_active {
     align-items: flex-start;
     justify-content: flex-start;
-    border: 2px solid rgba(20, 146, 8, 0.952);
+    /*border: 2px solid rgba(20, 146, 8, 0.952);*/
+    border: 2px solid lightgray;
     background-color: white;
 }
 .team_active .team_status{
+    border-bottom-right-radius: 7px;
     color: white;
     padding: 5px 10px;
     margin-bottom: -29px;
     z-index: 2;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
 }
 
 .team_delete{
@@ -386,6 +407,7 @@
 }
 
 .team_active .team_content{
+    width: 100%;
     padding: 15px;
 }
 
@@ -403,8 +425,8 @@
 }
 
 .team_users a {
-   width: 25px;
-   height: 25px;
+   width: 35px;
+   height: 35px;
    margin-right: 12px;
    margin-bottom: 10px;
    border-radius: 100px;
@@ -413,16 +435,11 @@
 }
 
 .team_buttons{
-    width: 100%;
+    width: calc(100% - 30px);
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-.team_buttons button{
-    margin-right: 15px;
-}
-
 
 
 

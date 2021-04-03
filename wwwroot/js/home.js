@@ -54,7 +54,7 @@ Vue.component('kriterii', {
     props: ['id', 'number', 'name'],
     template: `<tr>
                   <td>{{number+1}}</td>
-                  <td><input required style="width:400px" type="text" v-model="krit_name" v-on:input="inputData(id)" placeholder="Введите название критерия" /></td>
+                  <td><input required style="width:400px" type="text" v-model="krit_name" v-on:input="inputData(id)" placeholder="Введите название этапа" /></td>
                   <td><input required type="number" v-model="points" v-on:input="inputData(id)" min="1" style="width:100px" placeholder="Баллы"/></td>
                   <td class="delete_team" v-on:click="deleteKritInComponent(id)">❌</td>
                </tr>`,

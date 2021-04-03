@@ -28,8 +28,11 @@ namespace TeamBuilder.Models
         //Проекты, которые администрирует
         public List<ProjectUser> AdminProjects { get; set; }
 
+        //Проекты, которые жюрирует
+        public List<ProjectJury> JuryProjects { get; set; }
+
         //Оценки от пользователя
-        public List<Mark> Marks { get; set; }
+        //public List<Mark> Marks { get; set; }
 
         public List<Comment> Comments { get; set; }
 

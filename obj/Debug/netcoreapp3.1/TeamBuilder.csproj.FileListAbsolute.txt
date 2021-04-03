@@ -79,3 +79,5 @@ C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\Team
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\Razor\Views\Project\Index.cshtml.g.cs
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\TeamBuilder.csprojAssemblyReference.cache
 C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\scopedcss\bundle\TeamBuilder.styles.css
+C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\Razor\Views\Team\Index.cshtml.g.cs
+C:\Users\PC Master\Desktop\Проект КОНСТРУКТОР КОМАНД\TeamBuilder\obj\Debug\netcoreapp3.1\Razor\Views\Marks\Index.cshtml.g.cs

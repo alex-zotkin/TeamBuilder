@@ -11,6 +11,9 @@ namespace TeamBuilder.Models
         public string Name { get; set; }
         public int MaxPoints { get; set; }
         public Team Team { get; set; }
-        public List<UserMark> UserMark { get; set; }
+
+        public User User { get; set; }
+
+        public int Points { get; set; }
     }
 }

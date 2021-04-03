@@ -1,0 +1,286 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
+.changeable {
+    transition: all 0.1s ease;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    background: rgba(91, 35, 255, 0.1);
+}
+
+.changeable:hover{
+    background: rgba(91, 35, 255, 0.2);
+}
+
+#app {
+    width: 100%;
+    height: calc(100% - 73px);
+    position: absolute;
+    top: 73px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+
+.team_block {
+    width: calc(100% / 3);
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.team_users {
+    margin-top: 15px;
+    width: 70%;
+    max-height: 150px;
+    /*overflow-x: hidden;
+    overflow-y: auto;*/
+    padding: 0;
+    list-style-type: none;
+    /*display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;*/
+}
+
+.team_users a{
+    text-decoration: none;
+}
+
+.team_users li {
+    transition: all 0.1s ease;
+    border: 2px solid rgba(228, 228, 228, 0.8);
+    background-color: rgba(228, 228, 228, 0.8);
+    width: 100%;
+    padding: 0 5px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 8px;
+}
+
+.team_users li p {
+    margin: 8px 0 !important;
+}
+
+.team_users li:hover {
+    background-color: rgba(202, 202, 202, 0.6);
+}
+
+.team_user_img {
+    background-size: cover;
+    border-radius: 999px;
+    width: 35px;
+    height: 35px;
+}
+
+
+
+.box {
+    max-height: 90%;
+    border-radius: 10px;
+    padding: 18px 30px;
+    border: 2px solid rgba(228, 228, 228, 0.8);
+    /*background-color: rgba(228, 228, 228, 0.411);*/
+    /*background: linear-gradient(0deg, rgba(219,219,219,1) 0%, rgba(242,242,242,1) 100%);*/
+    width: 80%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    overflow: auto;
+    -webkit-box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
+    -moz-box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
+    box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
+}
+
+.about .team_img {
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+}
+
+#change_img_block {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+}
+
+#change_img_block:hover {
+    opacity: 1;
+    
+}
+
+#change_img_block input{
+    background: white;
+    color: black;
+    width: 80%;
+}
+
+
+
+.about p, .about h2{
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+
+label {
+    color: grey;
+}
+
+
+
+
+table {
+    margin: 25px 0;
+    width: 100%;
+}
+
+th {
+    font-weight: normal;
+    /*color: #039;*/
+    padding: 10px 15px;
+}
+
+td {
+    color: black;
+    border-top: 1px solid #e8edff;
+    padding: 10px 15px;
+}
+
+tr:nth-child(2n) {
+    background: rgba(228, 228, 228, 0.548);
+}
+
+
+
+
+.chat ul{
+    padding: 10px;
+    width: 95%;
+    background: rgba(167, 167, 167, 0.05);
+    border-radius: 8px;
+    border: 1px solid lightgrey;
+    height: 90%;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.chat ul li .mess {
+    width: 60%;
+    background: rgba(167, 167, 167, 0.1);
+    border-radius: 8px;
+    border: 1px solid lightgrey;
+    padding: 5px 8px;
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+}
+
+.chat ul li .mess div{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+
+.chat ul li .mess div p {
+    text-align:center;
+    margin: 1px 0px;
+    width: 85%;
+}
+
+
+.chat textarea{
+    width: 92%;
+}
+
+
+
+
+.myMes{
+    background: rgba(34, 45, 255, 0.08) !important;
+    float: right;
+}
+
+
+.mess:hover {
+    background: rgba(167, 167, 167, 0.25) !important;
+}
+
+.myMes:hover {
+    background: rgba(34, 45, 255, 0.13) !important;
+}
+
+
+.files ul {
+    margin: 10px 0;
+    width: 93%;
+}
+
+.files ul li{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.links, .files {
+    max-height: 200px;
+}
+
+.links p, .files p{
+    margin: 0;
+    white-space: nowrap;
+}
+
+.links a, .files a{
+    text-align: center;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    width: 200px;
+    overflow: hidden
+}
+
+
+
+.links ul {
+    margin: 10px 0;
+}
+
+
+.links ul li, .files ul li{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 5px 10px;
+    background-color: ghostwhite;
+    border-radius: 8px;
+    border: 1px solid lightgrey;
+    align-items:center;
+    margin-bottom: 7px;
+}

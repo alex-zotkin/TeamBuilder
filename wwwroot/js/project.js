@@ -93,20 +93,6 @@ Vue.component("add_admin", {
     </div>
     </div>
     `,
-    /*created() {
-        this.notAdmins = this.notadminsproject;
-        this.admins = this.adminsproject;
-    },
-    watch: {
-        adminName(newName) {
-            this.notAdmins = this.notadminsproject;
-            this.notAdmins = this.notadminsproject.filter(function (admin) {
-                str = admin.name + " " + admin.lastName;
-                return str.toLowerCase().includes(newName.toLowerCase());
-            });
-        },
-
-    },*/
     methods: {
         emitAdd(VkId) {
             this.adminName = "";
@@ -118,7 +104,54 @@ Vue.component("add_admin", {
   
 });
 
+Vue.component("add_jury", {
+    data: () => {
+        return {
+            adminName: '',
+            notAdmins: [],
+            admins: [],
+        }
+    },
+    props: {
+        notadminsproject: Array,
+        adminsproject: Array,
+    },
+    template:
+        `
+    <div class="alert">
+    <div class="admin_box">
+        <h3>Добавление администратора</h3>
+        <div class="blocks">
+            <div class="not_add_admin_list">
+                <ul >
+                    <li><h4>Доступные жюри:</h4></li>
+                    <li v-for="admin in this.notadminsproject"><img :src="admin.Photo50"> <p>{{admin.FirstName}} {{admin.LastName}}</p> <button class="button button_green" v-on:click="emitAdd(admin.VkId)">+</button></li>
+                </ul>
+            </div>
 
+            <div class="add_admin_list">
+                <ul>
+                    <li><h4>Жюри проекта:</h4></li>
+                    <li v-for="admin in this.adminsproject"><img :src="admin.Photo50"> <p>{{admin.FirstName}} {{admin.LastName}}</p> <button class="button button_red" v-on:click="$emit('deleteadmin',admin.VkId)">-</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="add_admin_buttons">
+            <button class="button button_green" v-on:click="$emit('close')">Сохранить</button>
+        </div>
+    </div>
+    </div>
+    `,
+    methods: {
+        emitAdd(VkId) {
+            this.adminName = "";
+            this.$emit('addjury', VkId);
+            this.notAdmins = this.notadminsproject;
+            this.admins = this.adminsproject;
+        },
+    }
+
+});
 
 
 
@@ -137,7 +170,9 @@ new Vue({
         deleteAlert: false,
 
         addAdminBox: false,
+        addJuryBox: false,
         alladmins: [],
+        alljury: [],
 
         news_text: "",
         news_textarea_desabled: false,
@@ -152,15 +187,22 @@ new Vue({
         adminsproject: [],
         notadminsproject: [],
 
+        juryproject: [],
+        notjuryproject: [],
+
         admins_pos: 0,
         admins_pos_change: false,
         news_pos: 300,
         news_pos_change: false,
         project_width: 600,
+
+
+
+        applications: [],
     },
     created: function () {
         this.loadData();
-
+        setInterval(this.loadData, 3000);
 
         let Path = location.pathname.split("/");
         let ProjectId = Path[Path.length - 1];
@@ -186,6 +228,7 @@ new Vue({
                 this.notadminsproject.push(this.alladmins[i]);
             }
         };*/
+
     },
     methods:{
         ShowInfo($event, user) {
@@ -241,11 +284,25 @@ new Vue({
                 url: "/allInfoAboutProject/" + ProjectId,
                 success: (data) => {
                     this.data = JSON.parse(data);
+                    this.applicationsSet();
                     this.notadminsproject = this.data.AllAdmins;
                     this.adminsproject = this.data.ProjectAdmins;
-                    console.log(this.data);
+                    this.notjuryproject = this.data.AllJury;
+                    this.juryproject = this.data.ProjectJury;
+
+                    Object.keys(this.data.TeamUsers).forEach((i, v) => {
+                        let arr = this.data.TeamUsers[Number(i)];
+                        for (let j = 0; j < arr.length; j += 1) {
+                            if (arr[j] != null) {
+                                this.data.TeamUsers[Number(i)][j] = this.data.TeamUsers[Number(i)][j].split("@");
+                            }
+                        }
+                       
+                    });
+                    //console.log(this.data);
+                    
                 }
-            });
+            })
         },
 
         addadmin(VkId) {
@@ -293,6 +350,51 @@ new Vue({
                     }
                 });
             }
+        },
+
+        addjury(VkId) {
+            let index = 0;
+            for (let i = 0; i < this.notjuryproject.length; i += 1) {
+                if (this.notjuryproject[i].VkId == Number(VkId)) {
+                    index = i;
+                    break;
+                }
+            }
+            this.juryproject.push(this.notjuryproject[index]);
+            this.notjuryproject.splice(index, 1);
+
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/addInProjectJury/" + ProjectId + "/" + VkId,
+                success: (data) => {
+                    //this.loadData();
+                }
+            });
+
+        },
+
+        deletejury(VkId) {
+                let index = 0;
+                for (let i = 0; i < this.juryproject.length; i += 1) {
+                    if (this.juryproject[i].VkId == Number(VkId)) {
+                        index = i;
+                        break;
+                    }
+                }
+                this.notjuryproject.push(this.juryproject[index]);
+                this.juryproject.splice(index, 1);
+
+                let Path = location.pathname.split("/");
+                let ProjectId = Path[Path.length - 1];
+                $.ajax({
+                    type: "POST",
+                    url: "/deleteFromProjectJury/" + ProjectId + "/" + VkId,
+                    success: (data) => {
+                        //this.loadData();
+                    }
+                });
         },
 
         addNew() {
@@ -360,8 +462,64 @@ new Vue({
                     $.cookie(cookieNews, "close");
                 }
             }
-        }
+        },
 
+
+
+
+        joinTeam(TeamId) {
+            if (this.data.CurrentUser.Course == 3) {
+                alert("Администраторы не могу вступать в команды студентов. Поменяйте свою роль в профиле и повторите попытку");
+            } else {
+                let Path = location.pathname.split("/");
+                let ProjectId = Path[Path.length - 1];
+                $.ajax({
+                    type: "POST",
+                    url: "/joinTeam/" + this.data.CurrentUser.VkId + "/" + TeamId,
+                    success: (data) => {
+                        this.loadData();
+                    }
+                });
+            }
+        },
+
+        exitTeam(TeamId) {
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/exitTeam/" + this.data.CurrentUser.VkId + "/" + TeamId,
+                success: (data) => {
+                    this.loadData();
+                }
+            });
+        },
+
+
+        deleteApplication(TeamId, UserId) {
+            $.ajax({
+                type: "POST",
+                url: "/notifications/deleteApplication/" + TeamId + "/" + UserId,
+            })
+                .always(data =>{
+                    this.loadData();
+                });
+        },
+
+
+        applicationsSet() {
+            this.applications = [];
+            let arr = this.data.ApplicationsForUser;
+            for (let i = 0; i < arr.length; i += 1) {
+                this.applications[arr[i].Team.TeamId] = {
+                    Team: arr[i].Team,
+                    Checked: arr[i].Checked,
+                    Successed: arr[i].Successed,
+                }
+            }
+            //console.log(this.applications);
+            /*console.log((typeof this.applications[15] != 'undefined') && this.applications[15].Checked);*/
+        },
     },
         
 });

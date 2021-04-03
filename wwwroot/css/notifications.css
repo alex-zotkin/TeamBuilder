@@ -1,31 +1,66 @@
 ﻿.notification_block {
+    width: 450px;
+    max-height: 450px;
+    overflow-y: auto;
     z-index: 10;
+    border-radius: 8px;
     top: 75px;
     right: 250px;
     position: fixed;
-    width: auto;
-    height: auto;
     background-color: white;
     color: black;
     border: 2px solid rgb(223, 223, 223);
     padding: 5em;
-    border-radius: 3px;
     -webkit-box-shadow: 7px 4px 22px 0px rgba(34, 60, 80, 0.2);
     -moz-box-shadow: 7px 4px 22px 0px rgba(34, 60, 80, 0.2);
     box-shadow: 7px 4px 22px 0px rgba(34, 60, 80, 0.2);
 }
 
+#notif{
+    text-align: center;
+}
+
+#notifCounter {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: red;
+    border-radius: 100px;
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    z-index: 2;
+    font-size: 14px;
+}
+
+.notifSection {
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.notifSection p{
+    margin: 0;
+}
+
+
 #notemptyblock {
     padding: 1em;
 }
 
-#bell img {
+#bell{
     cursor: pointer;
     right: 400px;
     top: 20px;
     width: 30px;
     position: absolute;
     margin-left: 0px;
+}
+
+#bell img{
+    width: 30px;
 }
 
 #bell:hover {
@@ -47,6 +82,7 @@
 .notifbutton {
     display: flex;
     justify-content: center;
+    margin: 20px 0;
 }
 
 .notifbutton .button_green {
@@ -54,7 +90,7 @@
 }
 
 .notifbutton .button{
-    margin-bottom: 10px !important;
+    margin: 0;
 }
 
 .importantwords {

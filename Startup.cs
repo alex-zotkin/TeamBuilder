@@ -125,6 +125,16 @@ namespace TeamBuilder
                  defaults: new { controller = "Project", action = "DeleteFromProjectAdmin" });
 
                 endpoints.MapControllerRoute(
+                 name: "addInProjectJury",
+                 pattern: "/addInProjectJury/{id}/{VkId}",
+                 defaults: new { controller = "Project", action = "AddInProjectJury" });
+
+                endpoints.MapControllerRoute(
+                 name: "deleteFromProjectJury",
+                 pattern: "/deleteFromProjectJury/{id}/{VkId}",
+                 defaults: new { controller = "Project", action = "DeleteFromProjectJury" });
+
+                endpoints.MapControllerRoute(
                  name: "addInProjectNews",
                  pattern: "/addInProjectNews/{id}/{VkId}/{text}",
                  defaults: new { controller = "Project", action = "AddInProjectNews" });
@@ -133,6 +143,110 @@ namespace TeamBuilder
                  name: "deleteInProjectNews",
                  pattern: "/deleteInProjectNews/{newId}",
                  defaults: new { controller = "Project", action = "DeleteInProjectNews" });
+
+                endpoints.MapControllerRoute(
+                 name: "joinTeam",
+                 pattern: "/joinTeam/{VkId}/{TeamId}",
+                 defaults: new { controller = "Project", action = "JoinTeam" });
+
+                endpoints.MapControllerRoute(
+                 name: "exitTeam",
+                 pattern: "/exitTeam/{VkId}/{TeamId}",
+                 defaults: new { controller = "Project", action = "ExitTeam" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "allNotifications",
+                 pattern: "/notifications/all",
+                 defaults: new { controller = "Notifications", action = "AllNotifications" });
+
+                endpoints.MapControllerRoute(
+                 name: "deleteApplication",
+                 pattern: "/notifications/deleteApplication/{TeamId}/{UserId}",
+                 defaults: new { controller = "Notifications", action = "DeleteApplication" });
+
+                endpoints.MapControllerRoute(
+                 name: "checkApplication",
+                 pattern: "/notifications/checkApplication/{TeamId}/{UserId}/{Successed}",
+                 defaults: new { controller = "Notifications", action = "CheckApplication" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "team",
+                 pattern: "/project/{ProjectId}/team/{TeamId}",
+                 defaults: new { controller = "Team", action = "Index" });
+
+                
+                endpoints.MapControllerRoute(
+                 name: "allInfoAboutTeam",
+                 pattern: "/allInfoAboutTeam/{TeamId}",
+                 defaults: new { controller = "Team", action = "AllInfoAboutTeam" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "changeInfoTeam",
+                 pattern: "/changeInfoTeam/{TeamId}/{inputName}/{data}",
+                 defaults: new { controller = "Team", action = "ChangeInfoTeam" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "changeTeamImg",
+                 pattern: "/changeTeamImg",
+                 defaults: new { controller = "Team", action = "ChangeTeamImg" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "sendMes",
+                 pattern: "/sendMes",
+                 defaults: new { controller = "Team", action = "SendMes" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "delMes",
+                 pattern: "/delMes",
+                 defaults: new { controller = "Team", action = "DelMes" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "saveLinks",
+                 pattern: "/saveLinks",
+                 defaults: new { controller = "Team", action = "SaveLinks" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "delFile",
+                 pattern: "/delFile",
+                 defaults: new { controller = "Team", action = "DelFile" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "loadFiles",
+                 pattern: "/loadFiles",
+                 defaults: new { controller = "Team", action = "LoadFiles" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "marks",
+                 pattern: "/project/{ProjectId}/marks",
+                 defaults: new { controller = "Marks", action = "Index" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "allInfoAboutMarks",
+                 pattern: "/allInfoAboutMarks/{ProjectId}",
+                 defaults: new { controller = "Marks", action = "AllInfoAboutMarks" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "setMark",
+                 pattern: "/setMark",
+                 defaults: new { controller = "Marks", action = "SetMark" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "openMarks",
+                 pattern: "/openMarks",
+                 defaults: new { controller = "Marks", action = "OpenMarks" });
             });
         }
     }

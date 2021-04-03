@@ -19,6 +19,65 @@ namespace TeamBuilder.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("TeamBuilder.Models.Application", b =>
+                {
+                    b.Property<int>("ApplicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Successed")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationId");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Applications");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.Chat", b =>
+                {
+                    b.Property<int>("ChatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChatId");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("TeamBuilder.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -44,6 +103,55 @@ namespace TeamBuilder.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("TeamBuilder.Models.FileModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.Link", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Links");
+                });
+
             modelBuilder.Entity("TeamBuilder.Models.Mark", b =>
                 {
                     b.Property<int>("Id")
@@ -56,6 +164,9 @@ namespace TeamBuilder.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
 
                     b.Property<int?>("TeamId")
                         .HasColumnType("int");
@@ -110,12 +221,30 @@ namespace TeamBuilder.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsMarksOpen")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProjectId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.ProjectJury", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProjectJury");
                 });
 
             modelBuilder.Entity("TeamBuilder.Models.ProjectUser", b =>
@@ -140,6 +269,12 @@ namespace TeamBuilder.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("Count1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count2")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -158,12 +293,20 @@ namespace TeamBuilder.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamLeadUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TeamId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("TeamLeadUserId");
 
                     b.ToTable("Teams");
                 });
@@ -217,10 +360,15 @@ namespace TeamBuilder.Migrations
                     b.Property<string>("PhotoMax")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
                     b.Property<int>("VkId")
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("Users");
                 });
@@ -235,19 +383,36 @@ namespace TeamBuilder.Migrations
                     b.Property<int>("Mark")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MarkId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MarkId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("UserMarks");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.Application", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId");
+
+                    b.HasOne("TeamBuilder.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.Chat", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId");
+
+                    b.HasOne("TeamBuilder.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TeamBuilder.Models.Comment", b =>
@@ -261,14 +426,28 @@ namespace TeamBuilder.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("TeamBuilder.Models.FileModel", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId");
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.Link", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId");
+                });
+
             modelBuilder.Entity("TeamBuilder.Models.Mark", b =>
                 {
                     b.HasOne("TeamBuilder.Models.Team", "Team")
-                        .WithMany("Marks")
+                        .WithMany()
                         .HasForeignKey("TeamId");
 
-                    b.HasOne("TeamBuilder.Models.User", null)
-                        .WithMany("Marks")
+                    b.HasOne("TeamBuilder.Models.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId");
                 });
 
@@ -281,6 +460,21 @@ namespace TeamBuilder.Migrations
                     b.HasOne("TeamBuilder.Models.Project", null)
                         .WithMany("News")
                         .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TeamBuilder.Models.ProjectJury", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Project", "Project")
+                        .WithMany("Jury")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TeamBuilder.Models.User", "User")
+                        .WithMany("JuryProjects")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -307,6 +501,10 @@ namespace TeamBuilder.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("TeamBuilder.Models.User", "TeamLead")
+                        .WithMany()
+                        .HasForeignKey("TeamLeadUserId");
                 });
 
             modelBuilder.Entity("TeamBuilder.Models.TeamUser", b =>
@@ -324,12 +522,15 @@ namespace TeamBuilder.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TeamBuilder.Models.User", b =>
+                {
+                    b.HasOne("TeamBuilder.Models.Team", null)
+                        .WithMany("UserInTeamInfo")
+                        .HasForeignKey("TeamId");
+                });
+
             modelBuilder.Entity("TeamBuilder.Models.UserMark", b =>
                 {
-                    b.HasOne("TeamBuilder.Models.Mark", null)
-                        .WithMany("UserMark")
-                        .HasForeignKey("MarkId");
-
                     b.HasOne("TeamBuilder.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");

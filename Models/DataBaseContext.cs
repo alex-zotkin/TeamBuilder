@@ -17,6 +17,11 @@ namespace TeamBuilder.Models
         public DbSet<TeamUser> TeamUsers { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }    
         public DbSet<UserMark> UserMarks { get; set; }
+        public DbSet<ProjectJury> ProjectJury { get; set; }
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Link> Links { get; set; }
+        public DbSet<FileModel> Files { get; set; }
 
         public DataBaseContext(DbContextOptions options) : base(options)
         {
@@ -49,6 +54,17 @@ namespace TeamBuilder.Models
                 .WithMany(e => e.AdminProjects)
                 .HasForeignKey(x => x.UserId);
 
+
+            modelBuilder.Entity<ProjectJury>()
+                .HasKey(x => new { x.ProjectId, x.UserId });
+            modelBuilder.Entity<ProjectJury>()
+                .HasOne(x => x.Project)
+                .WithMany(m => m.Jury)
+                .HasForeignKey(x => x.ProjectId);
+            modelBuilder.Entity<ProjectJury>()
+                .HasOne(x => x.User)
+                .WithMany(e => e.JuryProjects)
+                .HasForeignKey(x => x.UserId);
 
 
             modelBuilder.Entity<TeamUser>()
