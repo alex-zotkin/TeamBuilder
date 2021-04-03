@@ -18,6 +18,4 @@
   </ItemGroup>
 
 
-<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.targets" />
-
 </Project>
