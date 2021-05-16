@@ -2,6 +2,7 @@
     el: '#app',
     data: {
         data: [],
+        sortDirection: "",
     },
     created: function () {
         this.loadData();
@@ -14,8 +15,17 @@
                 type: "POST",
                 url: "/allInfoAboutMarks/" + ProjectId,
                 success: (data) => {
-                    this.data = JSON.parse(data);
-                    console.log(this.data);
+                    let n = data.split(";")
+                    if (n[0] == "NOJURY") {
+                        this.data = {};
+                        this.data.Jury = "NOJURY";
+                        this.data.Project = {};
+                        this.data.Project.ProjectId = n[1];
+                    }
+                    else {
+                        this.data = JSON.parse(data);
+                    }
+                   
                 }
             })
         },
@@ -27,8 +37,7 @@
             return false;
         },
 
-        setMark(TeamId, target, Stage) {
-            let Mark = $(target).val();
+        setMark(TeamId, Mark, Stage) {
             $.ajax({
                 type: "POST",
                 data: {
@@ -58,6 +67,43 @@
                     this.loadData();
                 }
             })
+        },
+
+        download() {
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 2];
+            $.ajax({
+                type: "POST",
+                data: {
+                    "ProjectId": ProjectId,
+                },
+                url: "/download",
+                success: () => {
+                }
+            })
+        },
+
+        sortTable() {
+            if (this.sortDirection == "▲") {
+                //сортировка по убыванию
+                this.data.Teams.sort(function (prev, next) {
+                    return (prev.Summary > next.Summary) ? -1 : 1;
+                });
+                console.log(this.data.Teams);
+            } else if (this.sortDirection == "▼") {
+                //сортировка по возрастанию
+                this.data.Teams.sort(function (prev, next) {
+                    return (prev.Summary < next.Summary) ? -1 : 1;
+                });
+            }
+        },
+
+        changeSortDirection() {
+            if (this.sortDirection == "" || this.sortDirection == "▼")
+                this.sortDirection = "▲";
+            else if (this.sortDirection == "▲")
+                this.sortDirection = "▼";
+            this.sortTable();
         }
     }
 });

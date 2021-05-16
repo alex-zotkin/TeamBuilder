@@ -25,12 +25,16 @@ $("select").on("change", () => {
         $("input[name=group]").val("").show();
         $(".checkselect").val("").show();
         $("textarea").val("").show();
-        $("#symbols_in_area").val("").show();
+        $("#symbols_in_area").text("0/50").show();
     } else {
-        $("input[name=group]").val(666).hide();
-        $(".checkselect").hide();
-        $("textarea").val("Администратор").hide();
-        $("#symbols_in_area").hide();
+        if (prompt("Введите кодовое слово; для теста, кодовое слово ADMINWORD") == 'ADMINWORD') {
+            $("input[name=group]").val(666).hide();
+            $(".checkselect").hide();
+            $("textarea").val("Администратор").hide();
+            $("#symbols_in_area").hide();
+        } else {
+            $("select").val(1);
+        }
     }
 });
 
@@ -38,22 +42,15 @@ $("select").on("change", () => {
 /*new Vue({
     el: '.profile',
     data: {
-        description: "",
+        textarea: "",
         symbols: 0
     },
-    watch: {
-        symbols: {
-            handler() {
-                if (this.symbols > 50) {
-                    this.symbols = 50;
-                    this.description = this.description.substr(0, 50);
-                }
-            }
-        }
-    },
     methods: {
-        DescriptionInput() {
-            this.symbols = this.description.length;
+        changeSymbols() {
+            if (this.textarea.length > 50) {
+                this.textarea = this.textarea.splice(0, 50);
+            }
+            this.symbols = this.textarea.length;
         }
     },
 });*/

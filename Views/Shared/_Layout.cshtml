@@ -14,7 +14,10 @@
 </head>
 <body>
     <div class="header" v-cloak>
-        <a asp-controller="Home" asp-action="Index" class="header_logo"><h3>Конструктор команд</h3></a>
+        <div class="header_logo">
+            <a asp-controller="Home" asp-action="Index"><h3>Конструктор команд</h3></a>
+            <a asp-route="howitworks" id="link_to_howitworks"><h3>?</h3></a>
+        </div>
         @if ((bool)ViewData["ProfileVisible"])
         {
 
@@ -30,7 +33,9 @@
                     <ul>
                         <li v-for="notifTeamLead in notifications.ApplicationsForTeamlead" class="notifSection">
                             <img :src="notifTeamLead.User.Photo50">
-                            <p><strong>{{ notifTeamLead.User.FirstName }} {{ notifTeamLead.User.LastName }}</strong> ({{notifTeamLead.User.Course}} курс) хочет вступить команду <strong> {{notifTeamLead.Team.Title}} </strong></p>
+                            <p><strong><a :href="'https://vk.com/id' + notifTeamLead.User.VkId" class="link">{{ notifTeamLead.User.FirstName }} {{ notifTeamLead.User.LastName }}</a></strong> ({{notifTeamLead.User.Course}} курс) хочет вступить команду <strong> {{notifTeamLead.Team.Title}} </strong>
+                            <br/>Обо мне <strong>{{notifTeamLead.User.Description}}</strong>
+                            </p>
                             <div class="notifbutton">
                                 <button class="button_green button" v-on:click="checkApplication(notifTeamLead.Team.TeamId, notifTeamLead.User.UserId, true)">Принять</button>
                                 <button class="button_red button" v-on:click="checkApplication(notifTeamLead.Team.TeamId, notifTeamLead.User.UserId, false)">Отклонить</button>
@@ -39,7 +44,7 @@
                         </li>
 
                         <li v-for="notifUser in notifications.ApplicationsForUser" class="notifSection" style="background-color: rgba(0,0,255,0.04)">
-                            <img v-if="!notifUser.Checked" src="https://i.gifer.com/XVo6.gif">
+                            <img v-if="!notifUser.Checked" src="/imgs/load.gif" style="border-radius: 0px;" >
                             <p v-if="!notifUser.Checked">
                                 Ваша заявка на вступление в команду <strong> {{notifUser.Team.Title}} </strong>
                                 обрабатывается тимлидом команды <a :href="'https://vk.com/id' + notifUser.Team.TeamLead.VkId" class="link">{{notifUser.Team.TeamLead.FirstName}} {{notifUser.Team.TeamLead.LastName}}</a>

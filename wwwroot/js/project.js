@@ -1,3 +1,50 @@
+Vue.component('team', {
+    data: function () {
+        return {
+            count_teams: "",
+            course1: "",
+            course2: ""
+        }
+    },
+    props: ['id'],
+    template: `<div class="team_inputs">
+                <span class= "team_input">
+                    <label for="">Кол-во команд</label>
+                    <input required type="number" min="0" autofocus v-on:input="inputInComponent(id)" v-model="count_teams">
+                 </span>
+                  * &nbsp; &nbsp; (
+                <span class="team_input">
+                    <label for="">Первокурсники</label>
+                    <input required type="number" min="0" v-model="course1" v-on:input="inputInComponent(id)">
+                 </span>
+                        +
+                 <span class="team_input">
+                    <label for="">Второкурсники</label>
+                    <input required type="number" min="0" v-model="course2" v-on:input="inputInComponent(id)">
+                    </span> )
+                 <span class="delete_team" v-on:click="deleteInComponent(id)">❌</span>
+               </div>`,
+    methods: {
+        inputInComponent(id) {
+            count_teams = this.count_teams;
+            course1 = this.course1;
+            course2 = this.course2;
+            this.$emit("changedata", {
+                id,
+                count_teams,
+                course1,
+                course2
+            })
+        },
+
+        deleteInComponent(id) {
+            this.$emit("deletedata", id);
+        }
+    }
+});
+
+
+
 Vue.component("info", {
     data: function () {
       return {
@@ -19,11 +66,12 @@ Vue.component("info", {
             <li><p>{{infodata.FirstName}} {{infodata.LastName}}</p></li>
             <li v-if="infodata.Course != 3">{{infodata.Course}} курс, {{infodata.Group}} группа</li>
             <li v-else>Администратор,<br> {{infodata.Group}} группа</li>
-            <li v-if="infodata.Course != 3">С#, C++, Pascal</li>
-
+          
             <li v-if="infodata.Course != 3">{{infodata.Description}}</li>
         </ul>
     </div>`
+
+        /*< li v-if= "infodata.Course != 3" > С#, C++, Pascal</li >*/
 });
 
 Vue.component("delete_alert",{
@@ -40,7 +88,7 @@ Vue.component("delete_alert",{
                     <br>Это действие НЕВОЗМОЖНО отменить. Вы уверены?
                 </p>
                 <div class="alert_buttons">
-                    <div class="button button_red">Удалить</div>
+                    <div class="button button_red" v-on:click="deleteAlert">Удалить</div>
                     <div class="button button_grey" v-on:click="closeAlert">Отмена</div>
                 </div>
            </div>
@@ -50,6 +98,10 @@ Vue.component("delete_alert",{
       methods:{
           closeAlert(){
             this.$emit('deletealert', false);
+          },
+
+          deleteAlert() {
+              this.$emit('deleteproject');
           }
       }
 });
@@ -160,6 +212,7 @@ new Vue({
     el: "#app",
     data: {
         data: [],
+        interval: 0,
 
         infoBool: false,
         infoposition: {x:"", y:""},
@@ -199,10 +252,38 @@ new Vue({
 
 
         applications: [],
+
+
+        changedTeams: [],
+
+        addUserFromAdmin: "",
+        usersNotInTeams: {},
+
+
+        showAddTeams: false,
+        team_inputs: [
+            { id: 0, count_teams: 0, course1: 0, course2: 0 },
+        ],
+        students: 0,
+        pointsSum: 0,
+        submitButton: true,
+    },
+    watch: {
+        team_inputs: {
+            deep: true,
+            handler() {
+                var res = 0;
+                for (var i = 0; i < this.team_inputs.length; i++) {
+                    res += Number(this.team_inputs[i].count_teams) * (Number(this.team_inputs[i].course1) + Number(this.team_inputs[i].course2));
+                }
+                this.students = res;
+            }
+        },
     },
     created: function () {
+        
         this.loadData();
-        setInterval(this.loadData, 3000);
+        this.interval = setInterval(this.loadData, 500);
 
         let Path = location.pathname.split("/");
         let ProjectId = Path[Path.length - 1];
@@ -248,24 +329,40 @@ new Vue({
 
         StartEdit(){
             this.editMode = true;
+            clearInterval(this.interval);
         },
 
-        EndEdit(){
+        EndEdit() {
+            this.interval = setInterval(this.loadData, 500);
             //Сохранение нового имени проектной деятельности
             let newProjectName = document.getElementById("projectName").value;
-            console.log(newProjectName);
+            //console.log(newProjectName);
             if (this.data.Project.Name != newProjectName) {
                 let Path = location.pathname.split("/");
                 let ProjectId = Path[Path.length - 1];
                 $.ajax({
                     type: "POST",
                     url: "/changeProjectName/" + ProjectId + "/" + newProjectName,
-                    success: (data) => {
+                    success: () => {
                         this.loadData();
                     }
                 });
             }
 
+            for (let i = 0; i < this.changedTeams.length; i+=1) {
+                $.ajax({
+                    type: "POST",
+                    url: "/changeteam",
+                    data: {
+                        "changedTeam": JSON.stringify(this.changedTeams[i])
+                    },
+                    success: (data) => {
+                        if (i == this.changedTeams.length - 1) {
+                            this.loadData();
+                        }
+                    }
+                });
+            }
 
 
             //Завершение редактирования
@@ -276,6 +373,24 @@ new Vue({
             this.deleteAlert = false;
         },
 
+        deleteproject() {
+            clearInterval(this.interval);
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/deleteproject",
+                data: {
+                    "ProjectId": ProjectId
+                },
+                success: (data) => {
+                    window.location.href = "/";
+                }
+            });   
+
+            window.location.href = "/";
+        },
+
         loadData() {
             let Path = location.pathname.split("/");
             let ProjectId = Path[Path.length - 1];
@@ -284,6 +399,17 @@ new Vue({
                 url: "/allInfoAboutProject/" + ProjectId,
                 success: (data) => {
                     this.data = JSON.parse(data);
+
+                    for (let i = 0; i < this.data.News.length; i+=1) {
+                        let d = this.data.News[i].Date.split("T")[0];
+                        let t = (this.data.News[i].Date.split("T")[1]).split(".")[0];
+
+                        let d2 = d.split("-");
+
+                        let str = d2[2] + "/" + d2[1] + "/" + d2[0] + " " + t.split(":")[0] + ":" + t.split(":")[1];
+                        this.data.News[i].Date = str;
+                    }
+
                     this.applicationsSet();
                     this.notadminsproject = this.data.AllAdmins;
                     this.adminsproject = this.data.ProjectAdmins;
@@ -306,6 +432,7 @@ new Vue({
         },
 
         addadmin(VkId) {
+            clearInterval(this.interval);
             let index = 0;
             for (let i = 0; i < this.notadminsproject.length; i += 1) {
                 if (this.notadminsproject[i].VkId == Number(VkId)) {
@@ -322,13 +449,14 @@ new Vue({
                 type: "POST",
                 url: "/addInProjectAdmin/" + ProjectId + "/" + VkId,
                 success: (data) => {
-                    //this.loadData();
+                    this.interval = setInterval(this.loadData, 500);
                 }
             });
 
         },
 
         deleteadmin(VkId) {
+            clearInterval(this.interval);
             if ((this.adminsproject.length > 1)) {
                 let index = 0;
                 for (let i = 0; i < this.adminsproject.length; i += 1) {
@@ -346,13 +474,14 @@ new Vue({
                     type: "POST",
                     url: "/deleteFromProjectAdmin/" + ProjectId + "/" + VkId,
                     success: (data) => {
-                        //this.loadData();
+                        this.interval = setInterval(this.loadData, 500);
                     }
                 });
             }
         },
 
         addjury(VkId) {
+            clearInterval(this.interval);
             let index = 0;
             for (let i = 0; i < this.notjuryproject.length; i += 1) {
                 if (this.notjuryproject[i].VkId == Number(VkId)) {
@@ -369,13 +498,14 @@ new Vue({
                 type: "POST",
                 url: "/addInProjectJury/" + ProjectId + "/" + VkId,
                 success: (data) => {
-                    //this.loadData();
+                    this.interval = setInterval(this.loadData, 500);
                 }
             });
 
         },
 
         deletejury(VkId) {
+                clearInterval(this.interval);
                 let index = 0;
                 for (let i = 0; i < this.juryproject.length; i += 1) {
                     if (this.juryproject[i].VkId == Number(VkId)) {
@@ -392,7 +522,7 @@ new Vue({
                     type: "POST",
                     url: "/deleteFromProjectJury/" + ProjectId + "/" + VkId,
                     success: (data) => {
-                        //this.loadData();
+                        this.interval = setInterval(this.loadData, 500);
                     }
                 });
         },
@@ -496,6 +626,17 @@ new Vue({
         },
 
 
+        deleteFromTeam(TeamId, VkId) {
+            $.ajax({
+                type: "POST",
+                url: "/exitTeam/" + VkId + "/" + TeamId,
+                success: (data) => {
+                    this.loadData();
+                }
+            });
+        },
+
+
         deleteApplication(TeamId, UserId) {
             $.ajax({
                 type: "POST",
@@ -520,6 +661,155 @@ new Vue({
             //console.log(this.applications);
             /*console.log((typeof this.applications[15] != 'undefined') && this.applications[15].Checked);*/
         },
+
+
+        teamChange(team, field, value) {
+            let find = false;
+            for (let i = 0; i < this.changedTeams.length; i += 1) {
+                if (this.changedTeams[i].TeamId == team.TeamId) {
+                    find = true;
+                    switch (field) {
+                        case 'title':
+                            this.changedTeams[i].Title = value;
+                            break;
+                        case 'type':
+                            this.changedTeams[i].Type = value;
+                            break;
+                        case 'desc':
+                            this.changedTeams[i].Description = value;
+                            break;
+                        case 'maxcount1':
+                            this.changedTeams[i].MaxCount1 = value;
+                            break;
+                        case 'maxcount2':
+                            this.changedTeams[i].MaxCount2 = value;
+                            break;
+                    }
+                }
+            }
+
+            if (!find) {
+                this.changedTeams.push(team);
+                let i = this.changedTeams.length - 1;
+
+                switch (field) {
+                    case 'title':
+                        this.changedTeams[i].Title = value;
+                        break;
+                    case 'type':
+                        this.changedTeams[i].Type = value;
+                        break;
+                    case 'desc':
+                        this.changedTeams[i].Description = value;
+                        break;
+                    case 'maxcount1':
+                        this.changedTeams[i].MaxCount1 = value;
+                        break;
+                    case 'maxcount2':
+                        this.changedTeams[i].MaxCount2 = value;
+                        break;
+                }
+            }
+        },
+
+        addUserFromAdminFunc(TeamId, Input) {
+            this.addUserFromAdmin = TeamId;
+
+            let Path = location.pathname.split("/");
+            let ProjectId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                data: {
+                    "ProjectId": ProjectId,
+                    "Input": Input
+                },
+                url: "/usersnotinproject",
+                success: (data) => {
+                    this.usersNotInTeams = JSON.parse(data);
+                    //console.log(this.usersNotInTeams);
+                }
+            });
+        },
+
+        addUserById(VkId){
+            $.ajax({
+                type: "POST",
+                data: {
+                    "TeamId": this.addUserFromAdmin,
+                    "VkId": VkId
+                },
+                url: "/adduserinteambyid",
+                success: (data) => {
+                    this.addUserFromAdminFunc(this.addUserFromAdmin, "");
+                    this.loadData();
+                }
+            });
+        },
+
+
+
+        addTeam() {
+
+            var id = this.team_inputs[this.team_inputs.length - 1].id + 1;
+            this.team_inputs.push({ id: id, count_teams: "", course1: "", course2: "" });
+        },
+        change(data) {
+            for (var i = 0; i < this.team_inputs.length; i++) {
+                if (this.team_inputs[i].id != data.id) {
+                    continue;
+                }
+                this.team_inputs[i].count_teams = data.count_teams;
+                this.team_inputs[i].course1 = data.course1;
+                this.team_inputs[i].course2 = data.course2;
+            }
+        },
+
+        deleteteam(id) {
+            if (this.team_inputs.length != 1) {
+                for (var i = 0; i < this.team_inputs.length; i++) {
+                    if (this.team_inputs[i].id == id) {
+                        this.team_inputs.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+
+        formSubmit() {
+            this.submitButton = false;
+            $.ajax({
+                url: '/addteamsinproject',
+                method: 'post',
+                dataType: 'text',
+                data: {
+                    "teams": JSON.stringify(this.team_inputs),
+                    "ProjectId": this.data.Project.ProjectId,
+                },
+                success: () =>{
+                    this.showAddTeams = false;
+                    this.submitButton = true;
+                    this.loadData();
+                }
+            });
+
+        },
+
+        deleteTeam(TeamId) {
+            if(confirm("Удалить команду?")){
+                $.ajax({
+                    url: '/deleteteam',
+                    method: 'post',
+                    dataType: 'text',
+                    data: {
+                        "TeamId": TeamId
+                    },
+                    success: (data) => {
+                        this.loadData();
+                    }
+                });
+}
+        }
+
     },
         
 });

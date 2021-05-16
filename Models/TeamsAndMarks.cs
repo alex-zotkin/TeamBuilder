@@ -9,6 +9,8 @@ namespace TeamBuilder.Models
     {
         public Team Team { get; set; }
         public List<List<Mark>> Marks { get; set; }
+        public List<int> StageSum { get; set; }
+        public int Summary { get; set; }
         public List<User> Users { get; set; }
     }
 }

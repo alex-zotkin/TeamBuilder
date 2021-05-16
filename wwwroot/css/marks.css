@@ -23,14 +23,14 @@
 table {
     width: 98%;
     border-collapse: collapse;
-    
+    margin-top: 60px;
 }
 
 th, td {
     padding: 10px;
     font-weight: 500;
     border: 1px solid grey;
-    text-align: justify;
+    text-align: inherit;
 }
 
 

@@ -89,6 +89,12 @@ namespace TeamBuilder
                     pattern: "/",
                     defaults: new { controller = "Home", action = "Index"});
 
+
+                endpoints.MapControllerRoute(
+                    name: "howitworks",
+                    pattern: "/howitworks",
+                    defaults: new { controller = "Howitworks", action = "Index" });
+
                 endpoints.MapControllerRoute(
                    name: "profileEdit",
                    pattern: "/profile",
@@ -99,10 +105,17 @@ namespace TeamBuilder
                    pattern: "/addProject",
                    defaults: new { controller = "Project", action = "Add" });
 
+
+                endpoints.MapControllerRoute(
+                   name: "addTeamsInProject",
+                   pattern: "/addteamsinproject",
+                   defaults: new { controller = "Project", action = "AddTeamsInProject" });
+
                 endpoints.MapControllerRoute(
                    name: "project",
                    pattern: "/project/{id}",
                    defaults: new { controller = "Project", action = "Index" });
+
 
                 endpoints.MapControllerRoute(
                   name: "allInfoAboutProject",
@@ -144,6 +157,30 @@ namespace TeamBuilder
                  pattern: "/deleteInProjectNews/{newId}",
                  defaults: new { controller = "Project", action = "DeleteInProjectNews" });
 
+
+                endpoints.MapControllerRoute(
+                 name: "usersNotInProject",
+                 pattern: "/usersnotinproject",
+                 defaults: new { controller = "Project", action = "UsersNotInProject" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "addUserInTeamById",
+                 pattern: "/adduserinteambyid",
+                 defaults: new { controller = "Project", action = "AddUserInTeamById" });
+
+                endpoints.MapControllerRoute(
+                 name: "deleteProject",
+                 pattern: "/deleteproject",
+                 defaults: new { controller = "Project", action = "DeleteProject" });
+
+
+
+                endpoints.MapControllerRoute(
+                 name: "deleteTeam",
+                 pattern: "/deleteteam",
+                 defaults: new { controller = "Project", action = "DeleteTeam" });
+
                 endpoints.MapControllerRoute(
                  name: "joinTeam",
                  pattern: "/joinTeam/{VkId}/{TeamId}",
@@ -153,6 +190,12 @@ namespace TeamBuilder
                  name: "exitTeam",
                  pattern: "/exitTeam/{VkId}/{TeamId}",
                  defaults: new { controller = "Project", action = "ExitTeam" });
+
+
+                endpoints.MapControllerRoute(
+                 name: "changeTeam",
+                 pattern: "/changeteam",
+                 defaults: new { controller = "Project", action = "ChangeTeam" });
 
 
                 endpoints.MapControllerRoute(
@@ -187,6 +230,11 @@ namespace TeamBuilder
                  name: "changeInfoTeam",
                  pattern: "/changeInfoTeam/{TeamId}/{inputName}/{data}",
                  defaults: new { controller = "Team", action = "ChangeInfoTeam" });
+
+                endpoints.MapControllerRoute(
+                 name: "setTeamLead",
+                 pattern: "/setteamlead",
+                 defaults: new { controller = "Team", action = "SetTeamLead" });
 
 
                 endpoints.MapControllerRoute(
@@ -247,6 +295,13 @@ namespace TeamBuilder
                  name: "openMarks",
                  pattern: "/openMarks",
                  defaults: new { controller = "Marks", action = "OpenMarks" });
+
+
+
+                endpoints.MapControllerRoute(
+                 name: "download",
+                 pattern: "/download",
+                 defaults: new { controller = "Marks", action = "Download" });
             });
         }
     }

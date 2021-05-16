@@ -75,7 +75,7 @@
 
 
 
-                <div style="width:450px; height:220px; overflow:auto;" class="checkselect">
+               @* <div style="width:450px; height:220px; overflow:auto;" class="checkselect">
                     <legend>Технологии, с которыми вы знакомы &nbsp; 👇 </legend>
                     <input type="checkbox" value="">Ничего не знаю, научите!
                     <fieldset>
@@ -104,11 +104,11 @@
                         <input type="checkbox" />Go<Br>
                         <input type="checkbox" />Другой язык<Br>
                     </fieldset>
-                </div>
+                </div>*@
 
                 <textarea required name="description" id="" cols="23" rows="4"
-                          placeholder="Ваши сильные стороны при командной работе (50 символов)">@ViewData["Description"]</textarea>
-                <p id="symbols_in_area" style="margin-top:-50px; margin-bottom: 40px; width: 440px; text-align:end;">0/50</p>
+                          placeholder="Ваши сильные стороны при командной работе (50 символов)" v-model="textarea" v-on:change="changeSymbols">@ViewData["Description"]</textarea>
+                <p id="symbols_in_area" style="margin-top:-50px; margin-bottom: 40px; width: 440px; text-align:end;">{{symbols}}/50</p>
                 <button type="submit" class="button button_blue"><h5>Сохранить</h5></button>
             </form>
         </div>

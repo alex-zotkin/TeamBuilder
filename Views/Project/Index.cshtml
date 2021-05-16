@@ -2,7 +2,7 @@
 <link href="~/css/project.css" rel="stylesheet" />
 
 <div id="app" v-cloak>
-    <delete_alert v-if="deleteAlert" v-on:deletealert="deletealert"></delete_alert>
+    <delete_alert v-if="deleteAlert" v-on:deletealert="deletealert" v-on:deleteproject="deleteproject"></delete_alert>
 
     <add_admin v-if="addAdminBox"
                :notadminsproject="notadminsproject"
@@ -25,10 +25,13 @@
         <h3 v-if="!editMode">{{data.Project.Name}}</h3>
         <input id="projectName" v-else type="text" placeholder="Название проектной деятельности" :value="data.Project.Name">
 
+        <a class="button button_blue" :href="'/project/' + data.Project.ProjectId + '/marks'">Оценки</a>
+
         <div class="admin_actions" v-if="data.IsUserAdmin">
             <div class="button button_red" v-if="!editMode" v-on:click="deleteAlert=true">Удалить ПД</div>
-            @*<div class="button button_green" v-if="!editMode" v-on:click="StartEdit">Редактировать</div>*@
-            @*<div class="button button_grey" v-else v-on:click="EndEdit">Сохранить</div>*@
+
+            <div class="button button_green" v-if="!editMode" v-on:click="StartEdit">Редактировать</div>
+            <div class="button button_grey" v-else v-on:click="EndEdit">Сохранить</div>
         </div>
     </div>
 
@@ -92,10 +95,21 @@
             </li>
         </ul>
         <h5 v-if="!admins_pos_change">Пользователи, <br> вступившие в команды</h5>
-        <ul v-if="!admins_pos_change">
+        <ul v-if="!admins_pos_change" class="usersInTeamUl">
             <li v-for="user in data.Users" v-on:mousemove="ShowInfo($event, user)"
-                                           v-on:mouseleave="infoBool = false">
-                <a href="">
+                v-on:mouseleave="infoBool = false">
+                <a :href="'https://vk.com/id' + user.VkId">
+                    <img :src="user.Photo50">
+                    <p>{{user.FirstName}} {{user.LastName}}</p>
+                </a>
+            </li>
+        </ul>
+
+        <h5 v-if="!admins_pos_change">Пользователи, <br>НЕ вступившие в команды</h5>
+        <ul v-if="!admins_pos_change" class="usersNotInTeamUl">
+            <li v-for="user in data.UsersNotInTeams" v-on:mousemove="ShowInfo($event, user)"
+                v-on:mouseleave="infoBool = false">
+                <a :href="'https://vk.com/id' + user.VkId">
                     <img :src="user.Photo50">
                     <p>{{user.FirstName}} {{user.LastName}}</p>
                 </a>
@@ -112,10 +126,10 @@
         </div>-->
 
         <div class="team team_active" v-for="team in data.Teams" :style="{borderColor: (data.IsUserInTeam == team.TeamId) ? 'rgba(0,0,255,0.4)' : 'lightgray', background: (data.IsUserInTeam == team.TeamId) ? 'rgba(0,0,255,0.04)' : 'white'}">
-            <span class="team_status" style="background-color: #ff9900" v-if="(typeof applications[team.TeamId] != 'undefined') && !applications[team.TeamId].Checked">Ваша заявка обрабатывается &nbsp; <img style="width:20px;" src="https://i.gifer.com/XVo6.gif" /></span>
+            <span class="team_status" style="background-color: #ff9900" v-if="(typeof applications[team.TeamId] != 'undefined') && !applications[team.TeamId].Checked">Ваша заявка обрабатывается &nbsp; <img style="width:20px;" src="/imgs/load.gif" /></span>
             <span class="team_status" style="background-color: rgba(20, 146, 8, 0.952)" v-else-if="data.IsUserInTeam != team.TeamId">Запись открыта</span>
             <span class="team_status" style="background-color: rgba(0,0,255,0.8)" v-else-if="data.IsUserInTeam == team.TeamId">Вы состоите в данной команде</span>
-            <span class="team_delete" v-if="editMode">❌</span>
+            <span class="team_delete" v-if="editMode" v-on:click="deleteTeam(team.TeamId)">❌</span>
             <div class="team_img" :style=" 'background-image: url(' + team.Img +  ')'"></div>
 
             <div class="team_content">
@@ -123,28 +137,30 @@
                     <span>Проект</span>
                     <h3 class="team_title" v-if="!editMode">{{team.Title}}</h3>
                 </div>
-                <input type="text" :value="team.Title" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode" />
+                <input v-on:change="teamChange(team, 'title', $event.target.value)" type="text" :value="team.Title" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode" />
 
                 <div class="team_block">
                     <span>Тип проекта</span>
-                    <p class="team_description">
+                    <p class="team_description" v-if="!editMode">
                         {{team.Type}}
                     </p>
                 </div>
+                <input v-on:change="teamChange(team, 'type', $event.target.value)" type="text" :value="team.Type" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode" />
 
                 <div class="team_block">
                     <span>Описание</span>
-                    <p class="team_description">
+                    <p class="team_description" v-if="!editMode">
                         {{team.Description}}
                     </p>
                 </div>
+                <textarea v-on:change="teamChange(team, 'desc', $event.target.value)" style="width: 80%; margin-top: -30px; margin-bottom: 15px;" v-if="editMode">{{team.Description}}</textarea>
 
                 <div class="team_block">
                     <span>Требования</span>
                     <p class="team_count" v-if="!editMode">{{team.MaxCount1}} перв. Х {{team.MaxCount2}} втор.</p>
                     <p class="team_count" v-if="editMode">
-                        <input type="number" min="1" :value="team.MaxCount1" style="width: 35px; padding: 2px;" /> перв.
-                        Х <input type="number" min="1" :value="team.MaxCount2" style="width: 35px; padding: 2px;" /> втор.
+                        <input v-on:change="teamChange(team, 'maxcount1', $event.target.value)" type="number" min="1" :value="team.MaxCount1" style="width: 35px; padding: 2px;" /> перв.
+                        Х <input v-on:change="teamChange(team, 'maxcount2', $event.target.value)" type="number" min="1" :value="team.MaxCount2" style="width: 35px; padding: 2px;" /> втор.
                     </p>
                 </div>
 
@@ -152,7 +168,9 @@
                     <span>Участники  &nbsp; <span :style="{color: (team.Count1 == team.MaxCount1) ? 'red' : 'green'}">{{team.Count1}}/{{team.MaxCount1}}</span> &nbsp; <span :style="{color: (team.Count2 == team.MaxCount2) ? 'red' : 'green'}">{{team.Count2}}/{{team.MaxCount2}}</span></span>
                     <div class="team_users">
                         <p v-if="data.TeamUsers[team.TeamId].length == 0">Никто еще не вступил в эту команду...</p>
-                        <a v-for="u in data.TeamUsers[team.TeamId]" :href="'https://vk.com/id' + u[2]" :style="{backgroundImage: 'url(' + u[3] + ')'}"></a>
+                        <a :title="u[0] + ' ' + u[1]" v-if="!editMode" v-for="u in data.TeamUsers[team.TeamId]" :href="'https://vk.com/id' + u[2]" :style="{backgroundImage: 'url(' + u[3] + ')'}"></a>
+                        <a :title="'Исключить из команды' + u[0] + ' ' + u[1]" v-if="editMode" v-on:click="deleteFromTeam(team.TeamId, u[2])" class="delUser" v-for="u in data.TeamUsers[team.TeamId]" href="#" :style="{backgroundImage: 'url(' + u[3] + ')'}"></a>
+                        <p class="addUs" title="Добавить участников" v-if="editMode" v-on:click="addUserFromAdminFunc(team.TeamId, '')">+</p>
                     </div>
                 </div>
 
@@ -167,32 +185,51 @@
             </div>
         </div>
 
-        <!--<div class="team team_disabled" v-if="editMode">
-            <input type="text" placeholder="Название команды" value="Команда" style="text-align: center;">
 
-            <div class="editSizeInput">
-                <div class="label">
-                    <label>1 курс</label>
-                    <input type="number" value="3">
-                </div>
-                <h2>Х</h2>
-                <div class="label">
-                    <label>2 курс</label>
-                    <input type="number" value="2">
-                </div>
-            </div>
-        </div>-->
-
-
-
-
-        <div class="team add_team" v-if="editMode">
+        <div class="team add_team" v-if="editMode" v-on:click="showAddTeams = true">
             <h1>+</h1>
             <p>Добавить команды</p>
         </div>
-
     </div>
 
-</div>
+    <div class="dark" v-if="addUserFromAdmin != ''"></div>
+    <div class="addUsInTeam" v-if="addUserFromAdmin != ''">
+        <div class="usersNotInTeams">
+            <span v-on:click="addUserFromAdmin = ''">❌</span>
+            <input placeholder="Поиск" type="text" v-on:input="addUserFromAdminFunc(addUserFromAdmin, $event.target.value)" />
+            <p v-if="usersNotInTeams.length == 0">По запросу не найден ни один пользователь</p>
+            <ul v-for="user in usersNotInTeams">
+                <li>
+                    <img :src="user.Photo50" style="width: 50px; border-radius: 100px;" />
+                    <a :href="'https://vk.com/' + user.VkId">{{user.FirstName}} {{user.LastName}} ({{user.Course}}.{{user.Group}})</a>
+                    <button class="button button_green" style="font-size: 20px; padding: 0 8px;" v-on:click="addUserById(user.VkId)">+</button>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-<script src="~/js/project.js"></script>
+
+
+    <div class="create_project_box" v-if="showAddTeams">
+        <div class="dark2"></div>
+
+        <div class="create_project">
+            <form action="" method="post" class="new_project_form" v-on:submit.prevent="formSubmit">
+                <p style="margin:20px 0 0px 0; font-size: 30px; cursor:pointer; position: relative; right: 48%;" v-on:click="showAddTeams=false">🞪</p>
+                <h4 style="margin-top: 0;">Добавление команд</h4>
+                <team v-for="(team, i) in team_inputs" :key="team.id" v-on:changedata="change" v-on:deletedata="deleteteam"
+                      :id="team.id"></team>
+
+                <p class="button button_green" v-on:click="addTeam()">+ Добавить команды</p>
+                <h5 class="sum_students" style="padding: 10px 50px;
+                                             border-top: 2px solid lightgrey;
+                                             border-bottom: 2px solid lightgrey;">
+                    Будет добавлено студентов: {{students}}
+                </h5>
+                <button class="button button_blue" type="submit" v-if="submitButton">Создать</button>
+                <button class="button button_blue" type="submit" v-else disabled>Идет создание команды...</button>
+            </form>
+            </div>
+    </div>
+</div>
+        <script src="~/js/project.js"></script>

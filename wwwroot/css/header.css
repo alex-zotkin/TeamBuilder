@@ -14,9 +14,39 @@
     left: 30px;
     text-decoration: none;
     color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
-.header_logo:visited{
+#link_to_howitworks {
+    margin-left: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    border: 2px solid #ffffff70;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff70;
+}
+
+#link_to_howitworks h3{
+    font-size: 20px;
+}
+
+#link_to_howitworks:hover{
+    border: 2px solid white;
+    color: white;
+}
+
+    .header_logo a {
+        text-decoration: none;
+        color: white;
+    }
+
+.header_logo a:visited{
     color: white;
 }
 

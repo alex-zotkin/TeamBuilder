@@ -39,8 +39,7 @@
 
 
 .team_users {
-    margin-top: 15px;
-    width: 70%;
+    margin: 10px 0;
     max-height: 150px;
     /*overflow-x: hidden;
     overflow-y: auto;*/
@@ -61,17 +60,19 @@
     border: 2px solid rgba(228, 228, 228, 0.8);
     background-color: rgba(228, 228, 228, 0.8);
     width: 100%;
-    padding: 0 5px;
+    padding: 8px 10px;
     border-radius: 8px;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     flex-direction: row;
     margin-bottom: 8px;
 }
 
-.team_users li p {
-    margin: 8px 0 !important;
+
+
+.team_users li a {
+    margin: 8px 10px !important;
 }
 
 .team_users li:hover {
@@ -103,6 +104,10 @@
     -webkit-box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
     -moz-box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
     box-shadow: 4px 4px 34px 0px rgba(34, 60, 80, 0.15);
+}
+
+.team_img{
+    min-height: 250px;
 }
 
 .about .team_img {
@@ -262,7 +267,7 @@ tr:nth-child(2n) {
     text-align: center;
     text-overflow:ellipsis;
     white-space: nowrap;
-    width: 200px;
+    width: 300px;
     overflow: hidden
 }
 

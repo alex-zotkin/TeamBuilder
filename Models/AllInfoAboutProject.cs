@@ -18,6 +18,7 @@ namespace TeamBuilder.Models
         public IEnumerable<User> AllAdmins { get; set; }
         public IEnumerable<User> AllJury { get; set; }
         public IEnumerable<User> Users { get; set; }
+        public IEnumerable<User> UsersNotInTeams { get; set; }
         public Project Project { get; set; }
         public IEnumerable<New> News { get; set; }
         public IEnumerable<Team> Teams { get; set; }

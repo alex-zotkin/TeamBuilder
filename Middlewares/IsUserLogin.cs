@@ -24,7 +24,7 @@ namespace TeamBuilder.Middlewares
             {
                 context.Response.Cookies.Delete("UserData");
                 context.Response.Cookies.Delete("AccessToken");
-                if (context.Request.Path != "/login" && context.Request.Path != "/auth" && context.Request.Path != "/logout" && context.Request.Path != "/error" && context.Request.Path != "/developers")
+                if (context.Request.Path != "/login" && context.Request.Path != "/auth" && context.Request.Path != "/logout" && context.Request.Path != "/error" && context.Request.Path != "/developers" && context.Request.Path != "/howitworks")
                 {
                     context.Response.Redirect("/login");
                 }
@@ -56,7 +56,7 @@ namespace TeamBuilder.Middlewares
                 {
                     context.Response.Cookies.Delete("UserData");
                     context.Response.Cookies.Delete("AccessToken");
-                    if (context.Request.Path != "/login" && context.Request.Path != "/auth" && context.Request.Path != "/logout" && context.Request.Path != "/error" && context.Request.Path != "/developers")
+                    if (context.Request.Path != "/login" && context.Request.Path != "/auth" && context.Request.Path != "/logout" && context.Request.Path != "/error" && context.Request.Path != "/developers" && context.Request.Path != "/howitworks")
                     {
                         context.Response.Redirect("/login");
                     }

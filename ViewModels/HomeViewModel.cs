@@ -37,13 +37,8 @@ namespace TeamBuilder.ViewModels
 
         public (int, int) CountUsersInTeamsInProject(Project p)
         {
-            int c1 = 0;
-            int c2 = 0;
-            foreach (Team t in AllTeams.Where(t => t.ProjectId == p.ProjectId))
-            {
-                //c1 += AllUsers.Where(team => team.TeamId == t.TeamId).Where(u => u.User.Course == 1).Count();
-                //c2 += AllUsers.Where(team => team.TeamId == t.TeamId).Where(u => u.User.Course == 2).Count();
-            }
+            int c1 = AllUsers.Where(team => team.Team.ProjectId == p.ProjectId).Where(u => u.User.Course == 1).Count();
+            int c2 = AllUsers.Where(team => team.Team.ProjectId == p.ProjectId).Where(u => u.User.Course == 2).Count();
 
             return (c1, c2);
         }

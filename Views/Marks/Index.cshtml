@@ -1,16 +1,19 @@
 ﻿<link href="~/css/marks.css" rel="stylesheet" />
 
 <div id="app" v-cloak>
+    <a :href="'/project/' + data.Project.ProjectId" style="position:absolute; left: 30px; padding: 10px 25px; background-color: rgb(200, 200, 200, 0.4); border-radius: 8px;" class="link">< Вернуться к проектной деятельности</a>
     <div class="info_for_admin" v-if="data.Project.IsMarksOpen && data.IsUserAdmin">
         <p>
             Оценки <b>ВИДНЫ</b> всем студентам
             <br><em>Имена членов жюри, ставивших <br>соответсвуюущие оценки, по преженему скрыты</em>
-        </p> 
-        <input type="button" name="name" value="Скрыть результаты" class="button button_red" v-on:click="marksOpen('close')"/>
+        </p>
+        <input type="button" value="Скрыть результаты" class="button button_red" v-on:click="marksOpen('close')" />
+        <input type="button" value="Скачать данные" class="button button_blue" v-on:click="download" style="margin-left: 15px" />
     </div>
     <div class="info_for_admin" v-else-if="!data.Project.IsMarksOpen && data.IsUserAdmin">
         <p>Оценки <b>СКРЫТЫ</b> от студентов</p>
-        <input type="button" name="name" value="Открыть результаты" class="button button_green" v-on:click="marksOpen('open')"/>
+        <input type="button" name="name" value="Открыть результаты" class="button button_green" v-on:click="marksOpen('open')" />
+        <input type="button" value="Скачать данные" class="button button_blue" v-on:click="download" style="margin-left: 15px" />
     </div>
 
     <table v-if="(data.Project.IsMarksOpen && !data.IsUserAdmin && !data.IsUserJury) || data.IsUserAdmin || data.IsUserJury">
@@ -20,12 +23,12 @@
             <th>Описание</th>
             <th>Участники</th>
             <th v-for="mark in data.Teams[0].Marks">{{mark[0].Name}} <mark><em>max = {{mark[0].MaxPoints}}</em></mark><br> <b></b> </th>
-            <th>Итоговая оценка</th>
+            <th v-on:click="changeSortDirection">Итоговая оценка <button class="button button_blue" style="margin:3px 0 0 0; padding: 8px 12px;">Сортировать {{sortDirection}}</button></th>
         </tr>
         <tr v-for="(item, index) in data.Teams" :key="index">
             <td width="25">{{index + 1}}</td>
             <td width="10%">
-                <a :href="'/project/' + item.Team.ProjectId + '/team/' + item.Team.TeamId"><h3>{{item.Team.Title}}</h3></a>
+                <a :href="'/project/' + item.Team.ProjectId + '/team/' + item.Team.TeamId" class="link"><h3 class="link">{{item.Team.Title}}</h3></a>
                 <p>{{item.Team.Type}}</p>
             </td>
             <td width="25%">
@@ -48,19 +51,22 @@
                         <label>Оценка {{index + 1}} &nbsp; &nbsp; </label>
                     </div>
 
-                    <input v-if="activeInput(mark.User.UserId)" type="number" :value="mark.Points" min="0" :max="mark.MaxPoints" v-on:input="setMark(item.Team.TeamId, $event.target, mark.Name)" />
+                    <input v-if="activeInput(mark.User.UserId)" type="number" :value="mark.Points" min="0" :max="mark.MaxPoints" v-on:input="setMark(item.Team.TeamId, $event.target.value, mark.Name)" />
                     <input v-else type="number" :value="mark.Points" min="0" :max="mark.MaxPoints" disabled />
                 </div>
-                <p>Сумарно: <b>{{data.StageSum[i]}}/{{stage[0].MaxPoints}}</b></p>
+                <p>Сумарно: <b>{{item.StageSum[i]}}</b></p>
             </td>
             <td width="10%">
-                <h2>{{data.Summary}}</h2>
+                <h2>{{item.Summary}}</h2>
             </td>
         </tr>
     </table>
-    <div v-else style="display: flex; width: 100%; justify-content: center; height: 600px; align-items:center; flex-direction:column;">
+    <div v-else-if='data.Jury != "NOJURY"' style="display: flex; width: 100%; justify-content: center; height: 600px; align-items:center; flex-direction:column;">
         <h2><em>Оценки скрыты администратором</em></h2><br>
-        <a :href="'/project/' + data.Project.ProjectId">Вернуться в проектную деятельность</a>
+    </div>
+
+    <div v-if='data.Jury == "NOJURY"' style="display: flex; width: 100%; justify-content: center; height: 600px; align-items:center; flex-direction:column; text-align: center;">
+        <h2><em>В текущую проектную деятельность не добавлен ни один член жюри,<br> обратитесь к администратору</em></h2><br>
     </div>
 </div>
 

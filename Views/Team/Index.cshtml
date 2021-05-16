@@ -2,44 +2,64 @@
 
 <div id="app" v-cloak>
     <div class="team_block">
-        <div class="box about">
-
+        <div class="box about" :style="{backgroundColor: data.isUserInTeam ? 'rgba(0, 0, 255, 0.08)' : ( (!data.isUserInProject && !data.isUserAdmin && !data.isUserInTeam && data.Application == '' && ((data.CurrentUser.Course == 1 && (data.Team.Count1 < data.Team.MaxCount1)) || (data.CurrentUser.Course == 2 && (data.Team.Count2 < data.Team.MaxCount2))) ) ? 'rgba(20, 146, 8, 0.2)' : ( (!data.isUserAdmin && !data.isUserInTeam && data.Application == 'ожидание') ? '#ff8a1961' : 'white') )}">
+            <a :href="'/project/' + data.Team.ProjectId" class="link" style="margin-bottom: 15px; padding: 10px 25px; background-color: rgb(200, 200, 200, 0.4); border-radius: 8px;">< Вернуться к проектной деятельности</a>
             <div class="team_img" :style="'background-image: url(' + data.Team.Img + ');'">
-                <form id="change_img_block" v-if="data.isUserTeamLead">
-                    <input type="text" value="" placeholder="Ссылка на изображение" id="img_link" v-model="imgSrc"/>
+                <form id="change_img_block" v-if="data.isUserTeamLead || data.isUserAdmin">
+                    <input type="text" value="" placeholder="Ссылка на изображение" id="img_link" v-model="imgSrc" />
                     <button class="button button_blue" v-on:click.prevent="changeImg">Сохранить</button>
                 </form>
             </div>
-            
+
+
+
+            <button v-if="!data.isUserInProject && !data.isUserAdmin && !data.isUserInTeam && (data.Application == '') && (((data.CurrentUser.Course == 1) && (data.Team.Count1 < data.Team.MaxCount1)) || ((data.CurrentUser.Course == 2) && (data.Team.Count2 < data.Team.MaxCount2))) " class="button button_green" style="margin: 10px 0;" v-on:click="joinTeam()">Вступить</button>
+            <button v-else-if="data.isUserInTeam" class="button button_red" style="margin: 10px 0;" v-on:click="exitTeam()">Выйти</button>
+            <button v-else-if="!data.isUserAdmin && !data.isUserInTeam && data.Application == 'ожидание'" class="button button_orange" style="margin: 10px 0;" v-on:click="deleteApplication">Заявка обрабатыватеся (нажмите, чтобы отозвать ее)</button>
+            <button v-else-if="!data.isUserAdmin && !data.isUserInTeam && data.Application == 'отказ'" class="button button_red" style="margin: 10px 0;" v-on:click="deleteApplication">Заявка отклонена (нажмите, чтобы подать заявку повторно)</button>
+
 
             <label>Название проекта</label>
-            <h2 :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputTitle" v-on:click="showInput('inputTitle')">{{data.Team.Title}}</h2>
+            <h2 :class="{changeable: data.isUserTeamLead || data.isUserAdmin}" v-if="!inputTitle" v-on:click="showInput('inputTitle')">{{data.Team.Title}}</h2>
             <input type="text" name="inputTitle" :value="data.Team.Title" v-if="inputTitle" v-on:keyup.enter="sendChanges('inputTitle')" />
 
             <label>Тип проекта</label>
-            <p :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputProjectType" v-on:click="showInput('inputProjectType')">{{data.Team.Type}}</p>
-            <input type="text" name="inputProjectType" :value="data.Team.Type" v-if="inputProjectType" v-on:keyup.enter="sendChanges('inputProjectType')"/>
+            <p :class="{changeable: data.isUserTeamLead || data.isUserAdmin}" v-if="!inputProjectType" v-on:click="showInput('inputProjectType')">{{data.Team.Type}}</p>
+            <input type="text" name="inputProjectType" :value="data.Team.Type" v-if="inputProjectType" v-on:keyup.enter="sendChanges('inputProjectType')" />
 
             <label>Описание</label>
-            <p :class="{changeable: data.isUserTeamLead || data.IsUserAdmin}" v-if="!inputDescription" v-on:click="showInput('inputDescription')">{{data.Team.Description}}</p>
-            <textarea rows="5" cols="30" name="inputDescription" v-if="inputDescription" v-on:keyup.enter="sendChanges('inputDescription')">{{data.Team.Description}}</textarea>
+            <p :class="{changeable: data.isUserTeamLead || data.isUserAdmin}" v-if="!inputDescription" v-on:click="showInput('inputDescription')">{{data.Team.Description}}</p>
+            <textarea style="min-height: 80px;" rows="5" cols="30" name="inputDescription" v-if="inputDescription" v-on:keyup.enter="sendChanges('inputDescription')">{{data.Team.Description}}</textarea>
+
+
+            <label>Количество участников</label>
+            <div style="display: flex; flex-direction: row; align-items: baseline;">
+                Первокурсники {{data.Team.Count1}}/
+                <p :class="{changeable:data.isUserAdmin}" v-if="!inputCount1" v-on:click="showInput('inputCount1')">{{data.Team.MaxCount1}}</p>
+                <input style="width: 30px;" :value="data.Team.MaxCount1" type="number" min="1" name="inputCount1" v-if="inputCount1" v-on:keyup.enter="sendChanges('inputCount1')" />
+            </div>
+
+
+            <div style="display: flex; flex-direction: row; align-items: baseline;">
+                Второкурсники {{data.Team.Count2}}/
+                <p :class="{changeable: data.isUserAdmin}" v-if="!inputCount2" v-on:click="showInput('inputCount2')">{{data.Team.MaxCount2}}</p>
+                <input style="width: 30px;" :value="data.Team.MaxCount2" type="number" min="1" name="inputCount2" v-if="inputCount2" v-on:keyup.enter="sendChanges('inputCount2')" />
+            </div>
+
+
             <h2>
                 Участники
             </h2>
             <ul id="hor_scroll" class="team_users">
-                <span v-for="user in data.Users">
-                    <a :href="'https://vk.com/id' + user.VkId">
-                        <li>
-                            <div class="team_user_img" :style="'background-image: url(' + user.Photo50 + ');'"></div>
-                            <p class="link">
-                                {{user.FirstName}} {{user.LastName}}
-                                <br> {{user.Course}} курс
-                                <br><b v-if="data.Team.TeamLead.UserId == user.UserId">капитан</b>
-                            </p>
-                            <input type="button" value="👑">
-                        </li>
+                <li v-for="user in data.Users">
+                    <div class="team_user_img" :style="'background-image: url(' + user.Photo50 + ');'"></div>
+                    <a class="link" :href="'https://vk.com/id' + user.VkId">
+                        {{user.FirstName}} {{user.LastName}}
+                        <br> {{user.Course}} курс
+                        <br><b v-if="data.Team.TeamLead.UserId == user.UserId">капитан</b>
                     </a>
-                </span>
+                    <input title="Назначить капитаном команды" v-on:click="setTeamLead(user.UserId)" v-if="data.Team.TeamLead.UserId != user.UserId && (data.isUserTeamLead || data.isUserAdmin )" type="button" value="👑" style="cursor: pointer;">
+                </li>
             </ul>
         </div>
     </div>
@@ -50,10 +70,10 @@
 
     <div class="team_block">
 
-        <div class="box chat">
+        <div class="box chat" v-if="data.isUserInTeam">
             <h2>Приватный чат</h2>
             <p><em>Сообщения в чате видны только участникам команды</em></p>
-            <ul v-if="data.IsUserInTeam">
+            <ul>
                 <li v-for="mes in data.Chat">
                     <div v-if="mes.User.UserId == data.CurrentUser.UserId" class="mess myMes">
                         <a :href="'https://vk.com/id' + mes.User.UserVkId">
@@ -84,12 +104,33 @@
             </ul>
 
 
-            <ul v-else>
+            @*<ul v-else>
                 <h3>У вас нет доступа к просмотру чата этой команды</h3>
-            </ul>
+            </ul>*@
 
-            <textarea rows="5" v-if="!chatLoading && data.IsUserInTeam" placeholder="Нажмите Enter, чтобы отправить сообщение" v-model="textChat" v-on:keyup.enter="sendMes"></textarea>
-            <textarea rows="5" v-else-if="chatLoading && data.IsUserInTeam" placeholder="Сообщение загружается..." disabled></textarea>
+            <textarea rows="5" v-if="!chatLoading && data.isUserInTeam" placeholder="Нажмите Enter, чтобы отправить сообщение" v-model="textChat" v-on:keyup.enter="sendMes"></textarea>
+            <textarea rows="5" v-else-if="chatLoading && data.isUserInTeam" placeholder="Сообщение загружается..." disabled></textarea>
+        </div>
+
+        <div class="box marks" v-else>
+            <h2>Оценки</h2>
+            <table>
+                <tr>
+                    <th>Этап</th>
+                    <th>Сумарная оценка</th>
+                </tr>
+
+                <tr v-for="mark in data.Marks">
+                    <td>{{mark.Name}}</td>
+                    <td> {{mark.Points}}/{{mark.MaxPoints}}</td>
+                </tr>
+                <tr>
+                    <td><b>Итоговая оценка</b></td>
+                    <td> {{data.Summary}} / {{data.SumMaxPoints}}</td>
+                </tr>
+            </table>
+            @*<h5 style="margin-bottom: 15px;">1 место среди всех команд</h5>*@
+            <a :href="'/project/' + data.Team.ProjectId + '/marks'">Перейти к общей таблице результатов</a>
         </div>
 
     </div>
@@ -101,7 +142,7 @@
 
 
     <div class="team_block">
-        <div class="box marks">
+        <div class="box marks" v-if="data.isUserInTeam">
             <h2>Оценки</h2>
             <table>
                 <tr>
@@ -130,11 +171,11 @@
             <h2>Файлы</h2>
             <p><em>загружаемые файлы любого формата</em></p>
             <ul v-for="(file, i) in data.Files">
-                <li><a :href="'http://file:///' + file.Path" class="link" target="_blank">{{i + 1}}. {{file.Name}}</a>
-                    <span v-on:click="delFile(file.Id)" style="cursor: pointer;">❌</span>
+                <li><a :href="'../../../files/' + file.Name" class="link" target="_blank">{{i + 1}}. {{file.ShortName}}</a>
+                    <span v-on:click="delFile(file.Id)" v-if="data.isUserInTeam || data.isUserAdmin" style="cursor: pointer;">❌</span>
                 </li>
             </ul>
-            <form asp-action="LoadFiles" asp-controller="Team" method="post" enctype="multipart/form-data" v-if="data.IsUserInTeam || data.IsUserAdmin">
+            <form asp-action="LoadFiles" asp-controller="Team" method="post" enctype="multipart/form-data" v-if="data.isUserInTeam || data.isUserAdmin">
                 <input type="file" name="uploadedFile" /><br>
                 <input type="hidden" name="TeamId" :value="data.Team.TeamId">
                 <input type="submit" value="Загрузить" class="button button_blue"/>
@@ -147,7 +188,7 @@
 
         <div class="box links">
             <h2>Ссылки</h2>
-            <p><em>(гитхаб, другие внешние ресурсы)</em></p>
+            <p><em>гитхаб, другие внешние ресурсы</em></p>
             <ul v-if="linksEdit">
                 <li v-for="link in links">
                     <input v-model="link.Name" type="text" placeholder="Название" style="width: 80px; margin-right: 10px;" />
@@ -167,7 +208,7 @@
                     <a :href="'https://' + link.Value" class="link" target="_blank">{{link.Value}}</a>
                 </li>
             </ul>
-            <input type="button" value="Редактировать" class="button button_blue" v-if="!linksEdit && (data.IsUserInTeam || data.IsUserAdmin)" v-on:click="linksEdit = true"/>
+            <input type="button" value="Редактировать" class="button button_blue" v-if="!linksEdit && (data.isUserInTeam || data.isUserAdmin)" v-on:click="startEditLinks"/>
         </div>
     </div>
 </div>

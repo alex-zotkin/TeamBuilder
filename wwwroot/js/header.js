@@ -8,7 +8,7 @@
     },
     created: function(){
         this.loadNotifications();
-        setInterval(this.loadNotifications, 5000);
+        setInterval(this.loadNotifications, 500);
     },
     methods: {
         loadNotifications(){
@@ -23,6 +23,8 @@
                     //this.loadData();
                 }
             });
+
+            console.clear();
         },
 
         deleteApplication(TeamId, UserId) {

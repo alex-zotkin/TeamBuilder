@@ -25,6 +25,7 @@ namespace TeamBuilder.Controllers
             ViewData["ProfileVisible"] = HttpContext.Request.Cookies.ContainsKey("UserData");
             int VkId = int.Parse(HttpContext.Request.Cookies["UserData"]);
             User User = await db.Users.Where(u => u.VkId == VkId).FirstAsync();
+            List<User> Users = await db.Users.ToListAsync();
             List<TeamUser> AllUsers = await db.TeamUsers.ToListAsync();
 
             List<Project> ProjectsForAdmin = await db.ProjectUsers.Where(p=> p.User.VkId == VkId).Select(p=>p.Project).OrderByDescending(p=>p.Date).ToListAsync();

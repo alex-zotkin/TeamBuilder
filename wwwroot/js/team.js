@@ -7,6 +7,8 @@
         inputTitle: false,
         inputProjectType: false,
         inputDescription: false,
+        inputCount1: false,
+        inputCount2: false,
 
 
         isUserTeamLead: true,
@@ -24,6 +26,7 @@
     },
     created: function () {
         this.loadData();
+        this.interval = setInterval(this.loadData, 500);
     },
     methods: {
         loadData() {
@@ -34,14 +37,26 @@
                 url: "/allInfoAboutTeam/" + TeamId,
                 success: (data) => {
                     this.data = JSON.parse(data);
+
+                    for (let i = 0; i < this.data.Files.length; i += 1) {
+                        let n = this.data.Files[i].Name.split("-");
+                        let s = "";
+
+                        for (let j = 1; j < n.length; j += 1) {
+                            s += n[j];
+                        }
+                        this.data.Files[i].ShortName = s;
+                    }
+
                     this.links = this.data.Links;
-                    console.log(this.data);
+                    //console.log(this.data);
                 }
             })
         },
 
         showInput(inputName) {
-            if (this.data.isUserTeamLead) {
+ 
+            if (this.data.isUserTeamLead || this.data.isUserAdmin) {
                 this.sendChanges();
                 switch (inputName) {
                     case "inputTitle":
@@ -52,6 +67,12 @@
                         break;
                     case "inputDescription":
                         this.inputDescription = true;
+                        break;
+                    case "inputCount1":
+                        this.inputCount1 = this.data.isUserAdmin;
+                        break;
+                    case "inputCount2":
+                        this.inputCount2 = this.data.isUserAdmin;
                         break;
                 }
                 $("[name = " + inputName + "]:first").focus();
@@ -76,6 +97,24 @@
             this.inputTitle = false;
             this.inputProjectType = false;
             this.inputDescription = false;
+            this.inputCount1 = false;
+            this.inputCount2 = false;
+        },
+
+        setTeamLead(UserId) {
+            let Path = location.pathname.split("/");
+            let TeamId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/setteamlead",
+                data: {
+                    "UserId": UserId,
+                    "TeamId": TeamId
+                },
+                success: () => {
+                    this.loadData();
+                }
+            })
         },
 
         changeImg() {
@@ -91,7 +130,7 @@
                     },
                     url: "/changeTeamImg",
                     success: (res) => {
-                        console.log(res);
+                        //console.log(res);
                         this.loadData();
                     }
                 });
@@ -136,6 +175,10 @@
             });
         },
 
+        startEditLinks() {
+            this.linksEdit = true;
+            clearInterval(this.interval);
+        },
 
         addLink() {
             if (this.links.length == 0) {
@@ -178,7 +221,7 @@
                 },
                 url: "/delFile",
                 success: (res) => {
-                    console.log(res);
+                    //console.log(res);
                     this.loadData();
                 }
             });
@@ -196,32 +239,54 @@
                 },
                 url: "/saveLinks",
                 success: (res) => {
-                    console.log(res);
+                    this.interval = setInterval(this.loadData, 500);
                     this.loadData();
                 }
             });
         },
 
-        /*SetNewImg($event) {
-            $event.preventDefault();
-            let link = $("#img_link").val();
-            let file = $("#img_file");
-            console.log(link);
-            console.log(file);
-            let formData = new FormData($("#change_img_block")[0]);
-            console.log(formData);
-            if (link != "") {
-                /*let Path = location.pathname.split("/");
-                let TeamId = Path[Path.length - 1];
-
+        joinTeam() {
+            let Path = location.pathname.split("/");
+            let TeamId = Path[Path.length - 1];
+            if (this.data.CurrentUser.Course == 3) {
+                alert("Администраторы не могу вступать в команды студентов. Поменяйте свою роль в профиле и повторите попытку");
+            } else {
+                let Path = location.pathname.split("/");
+                let ProjectId = Path[Path.length - 1];
                 $.ajax({
                     type: "POST",
-                    url: "/changeInfoTeam/" + TeamId + "/" + inputName + "/" + data,
-                    success: () => {
+                    url: "/joinTeam/" + this.data.CurrentUser.VkId + "/" + TeamId,
+                    success: (data) => {
                         this.loadData();
                     }
-                })
-            }*/
+                });
+            }
+        },
+
+        exitTeam() {
+            let Path = location.pathname.split("/");
+            let TeamId = Path[Path.length - 1];
+            $.ajax({
+                type: "POST",
+                url: "/exitTeam/" + this.data.CurrentUser.VkId + "/" + TeamId,
+                success: (data) => {
+                    this.loadData();
+                }
+            });
+        },
+
+
+        deleteApplication() {
+            let Path = location.pathname.split("/");
+            let TeamId = Path[Path.length - 1]
+            $.ajax({
+                type: "POST",
+                url: "/notifications/deleteApplication/" + TeamId + "/" + this.data.CurrentUser.UserId,
+            })
+                .always(data => {
+                    this.loadData();
+                });
+        },
     }
 }
 );

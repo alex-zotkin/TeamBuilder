@@ -12,7 +12,7 @@ namespace TeamBuilder.Models
         public List<Mark> Marks {get; set;}
         public int Summary { get; set; }
         public int SumMaxPoints { get; set; }
-        public bool IsUserInTeam { get; set; }
+        public bool isUserInTeam { get; set; }
         public bool isUserTeamLead { get; set; }
         public bool isUserAdmin { get; set; }
         public User CurrentUser { get; set; }
@@ -20,6 +20,10 @@ namespace TeamBuilder.Models
         public List<Link> Links { get; set; }
 
         public List<FileModel> Files { get; set; }
+
+        public string Application { get; set; }
+
+        public bool isUserInProject { get; set; }
         
     }
 }
